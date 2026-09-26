@@ -20,10 +20,10 @@ const API_KEY =
 
 /* =========================
    PRICE SETTINGS
+   SMMZZ LIVE RATE IS USED
+   AS INR / 1K
+   CUSTOMER MARGIN = 40%
 ========================= */
-
-const FX =
-  Number(process.env.PROVIDER_TO_INR || 85);
 
 const MULTIPLIER =
   Number(process.env.PRICE_MULTIPLIER || 1.40);
@@ -64,7 +64,6 @@ app.use(
 
 /* =========================
    FRONTEND
-   index.html is in ROOT
 ========================= */
 
 app.use(express.static(__dirname));
@@ -96,7 +95,10 @@ async function provider(params) {
       value !== null &&
       String(value) !== ''
     ) {
-      body.set(name, String(value));
+      body.set(
+        name,
+        String(value)
+      );
     }
   }
 
@@ -172,7 +174,6 @@ app.get(
       provider: 'SMMZZ',
       supabaseConfigured: Boolean(supabase),
       supabaseConnected: supabaseOk,
-      fx: FX,
       multiplier: MULTIPLIER
     });
   }
@@ -228,12 +229,13 @@ app.get(
         }
 
         /* =========================
-           40% CUSTOMER PRICE
+           FINAL CUSTOMER PRICE
+           SMMZZ RATE = INR / 1K
+           + 40% MARGIN
         ========================= */
 
         const ratePer1k =
           providerRate *
-          FX *
           MULTIPLIER;
 
         const ratePerUnit =
@@ -285,8 +287,7 @@ app.get(
       res.json({
         services: grouped,
         currency: 'INR',
-        providerCurrency: 'USD',
-        fx: FX,
+        providerCurrency: 'INR',
         multiplier: MULTIPLIER
       });
 
@@ -607,11 +608,6 @@ app.listen(
     console.log(
       'Supabase configured: ' +
       Boolean(supabase)
-    );
-
-    console.log(
-      'Provider to INR: ' +
-      FX
     );
 
     console.log(
