@@ -774,8 +774,24 @@ function renderPaymentStep(){
 
   const qr=document.getElementById('paymentQR');
   if(qr){
-    qr.src='https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=12&data='+encoded;
-    qr.onerror=()=>{qr.alt='QR could not be loaded. Please use a UPI app button below.';};
+    const quickChartUrl =
+      'https://quickchart.io/qr?size=520&margin=2&text=' + encoded;
+
+    const qrServerUrl =
+      'https://api.qrserver.com/v1/create-qr-code/?size=520x520&margin=12&data=' + encoded;
+
+    qr.dataset.fallback='0';
+    qr.alt='UPI payment QR code';
+    qr.src=quickChartUrl;
+
+    qr.onerror=()=>{
+      if(qr.dataset.fallback!=='1'){
+        qr.dataset.fallback='1';
+        qr.src=qrServerUrl;
+      }else{
+        qr.alt='QR could not be loaded. Please use a UPI app button below.';
+      }
+    };
   }
 
   const params=upi.split('?')[1];
