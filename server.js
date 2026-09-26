@@ -54,11 +54,12 @@ app.use(
   })
 );
 
-app.use(
-  express.static(
-    path.join(__dirname, 'public')
-  )
-);
+/* =========================
+   FRONTEND
+   index.html is in ROOT
+========================= */
+
+app.use(express.static(__dirname));
 
 /* =========================
    SMMZZ HELPER
@@ -561,6 +562,7 @@ app.post(
 
 /* =========================
    FRONTEND FALLBACK
+   index.html is in ROOT
 ========================= */
 
 app.get(
@@ -570,7 +572,6 @@ app.get(
     res.sendFile(
       path.join(
         __dirname,
-        'public',
         'index.html'
       )
     );
