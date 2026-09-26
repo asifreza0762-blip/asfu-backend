@@ -525,6 +525,41 @@ footer > div:first-child{
 html.asfu-session-boot #landing{display:none!important}
 html.asfu-session-boot #app{display:block!important;visibility:hidden}
 </style>
+
+<style id="asfu-orders-mobile-polish">
+/* My Orders — responsive polish, scoped only to the orders page */
+#page-orders .tableWrap{overflow:hidden;padding:0}
+#page-orders .table{min-width:760px}
+#page-orders .table th{font-size:12px;text-transform:uppercase;letter-spacing:.55px;color:#8fa5c9;background:#09172a}
+#page-orders .table td{vertical-align:middle}
+#page-orders .table td:nth-child(3){max-width:360px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:600px){
+  #page-orders .pageHead{margin-bottom:14px}
+  #page-orders .pageHead h1{font-size:24px}
+  #page-orders .tableWrap{background:transparent;border:0;overflow:visible}
+  #page-orders .table{display:block;min-width:0;width:100%;border-collapse:separate}
+  #page-orders .table thead{display:none}
+  #page-orders .table tbody{display:grid;gap:12px}
+  #page-orders .table tr{display:block;padding:15px 14px;border:1px solid #1d3155;border-radius:16px;background:linear-gradient(145deg,#0b172a,#081222);box-shadow:0 10px 24px rgba(0,0,0,.14)}
+  #page-orders .table td{display:grid;grid-template-columns:82px minmax(0,1fr);gap:10px;align-items:start;padding:7px 0;border:0;white-space:normal;text-align:right;overflow-wrap:anywhere;font-size:13px;color:#e8f0ff}
+  #page-orders .table td:first-child{padding-top:0}
+  #page-orders .table td:last-child{padding-bottom:0}
+  #page-orders .table td::before{content:"";text-align:left;color:#8198bd;font-size:10px;font-weight:800;letter-spacing:.75px;text-transform:uppercase}
+  #page-orders .table td:nth-child(1)::before{content:"Order ID"}
+  #page-orders .table td:nth-child(2)::before{content:"Service"}
+  #page-orders .table td:nth-child(3)::before{content:"Target"}
+  #page-orders .table td:nth-child(4)::before{content:"Quantity"}
+  #page-orders .table td:nth-child(5)::before{content:"Amount"}
+  #page-orders .table td:nth-child(6)::before{content:"Status"}
+  #page-orders .table td:nth-child(7)::before{content:"Date"}
+  #page-orders .table td:nth-child(3){max-width:none;overflow:visible;text-overflow:clip}
+  #page-orders .table td:nth-child(2),#page-orders .table td:nth-child(3){line-height:1.45}
+  #page-orders .table td:nth-child(6){align-items:center}
+  #page-orders .table td[colspan]{display:block;text-align:center;padding:8px 0}
+  #page-orders .table td[colspan]::before{display:none}
+}
+</style>
+
 </head>
 <body>
 <div id="landing">
@@ -1152,16 +1187,18 @@ loadServices();
 
   window.submitAuth = submitAuthSupabase;
 
-  window.logout = async function(){
-    try{
-      await sb.auth.signOut();
-    }catch(e){}
-
+  window.logout = function(){
+    /* Hide the app immediately; network sign-out continues in the background. */
     current = null;
     localStorage.removeItem(KEY+'_session');
     document.getElementById('app').style.display='none';
+    document.getElementById('app').style.visibility='visible';
     document.getElementById('landing').style.display='block';
     scrollToId('landing');
+
+    try{
+      sb.auth.signOut().catch(function(){});
+    }catch(e){}
   };
 
   async function bootSupabase(){
