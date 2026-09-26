@@ -18,6 +18,10 @@ const API_URL =
 const API_KEY =
   String(process.env.SMMZZ_API_KEY || '').trim();
 
+/* =========================
+   PRICE SETTINGS
+========================= */
+
 const FX =
   Number(process.env.PROVIDER_TO_INR || 85);
 
@@ -43,10 +47,14 @@ const supabase =
     : null;
 
 /* =========================
-   APP MIDDLEWARE
+   MIDDLEWARE
 ========================= */
 
-app.use(express.json({ limit: '1mb' }));
+app.use(
+  express.json({
+    limit: '1mb'
+  })
+);
 
 app.use(
   express.urlencoded({
@@ -81,18 +89,14 @@ async function provider(params) {
   body.set('key', API_KEY);
 
   for (
-    const [name, value]
-    of Object.entries(params || {})
+    const [name, value] of Object.entries(params || {})
   ) {
     if (
       value !== undefined &&
       value !== null &&
       String(value) !== ''
     ) {
-      body.set(
-        name,
-        String(value)
-      );
+      body.set(name, String(value));
     }
   }
 
@@ -104,7 +108,7 @@ async function provider(params) {
         'Content-Type':
           'application/x-www-form-urlencoded'
       },
-      body: body
+      body
     }
   );
 
@@ -167,7 +171,9 @@ app.get(
       configured: Boolean(API_KEY),
       provider: 'SMMZZ',
       supabaseConfigured: Boolean(supabase),
-      supabaseConnected: supabaseOk
+      supabaseConnected: supabaseOk,
+      fx: FX,
+      multiplier: MULTIPLIER
     });
   }
 );
@@ -221,7 +227,20 @@ app.get(
           grouped[category] = [];
         }
 
+        /* =========================
+           40% CUSTOMER PRICE
+        ========================= */
+
+        const ratePer1k =
+          providerRate *
+          FX *
+          MULTIPLIER;
+
+        const ratePerUnit =
+          ratePer1k / 1000;
+
         grouped[category].push({
+
           providerServiceId:
             String(
               service.service
@@ -246,15 +265,10 @@ app.get(
             providerRate,
 
           ratePer1k:
-            providerRate *
-            FX *
-            MULTIPLIER,
+            ratePer1k,
 
           ratePerUnit:
-            providerRate *
-            FX *
-            MULTIPLIER /
-            1000,
+            ratePerUnit,
 
           min:
             Number(
@@ -562,7 +576,6 @@ app.post(
 
 /* =========================
    FRONTEND FALLBACK
-   index.html is in ROOT
 ========================= */
 
 app.get(
@@ -594,6 +607,16 @@ app.listen(
     console.log(
       'Supabase configured: ' +
       Boolean(supabase)
+    );
+
+    console.log(
+      'Provider to INR: ' +
+      FX
+    );
+
+    console.log(
+      'Customer multiplier: ' +
+      MULTIPLIER
     );
   }
 );
