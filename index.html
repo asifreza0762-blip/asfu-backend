@@ -888,7 +888,7 @@ document.addEventListener('click',function(e){
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSide();});
 loadServices();
-if(restoreSession()){enterApp(lastPage)}
+/* Supabase Auth bootstrap handles normal users; admin local session is restored by the Supabase auth bridge below. */
 </script>
 
 <script>
@@ -997,4 +997,205 @@ if(restoreSession()){enterApp(lastPage)}
   setTimeout(syncServices,500);
 })();
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script id="asfu-supabase-auth">
+(function(){
+  'use strict';
+
+  const SUPABASE_URL = 'https://beknmgmjjqrzmrlxsnab.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_SHzv81VGtqiTKg6rTQD3Rg_xDX5uQC5';
+
+  if(!window.supabase || !window.supabase.createClient){
+    console.error('Supabase JS client failed to load.');
+    return;
+  }
+
+  const sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+
+  window.asfuSupabase = sb;
+
+  function localMirrorUser(authUser){
+    const meta = authUser.user_metadata || {};
+    const id = String(authUser.id);
+    const email = String(authUser.email || '').toLowerCase();
+    let u = db.users.find(x => String(x.id) === id);
+
+    if(!u){
+      u = {
+        id: id,
+        name: String(meta.name || meta.full_name || email.split('@')[0] || 'User'),
+        username: String(meta.username || ''),
+        email: email,
+        role: 'user',
+        balance: 0
+      };
+      db.users.push(u);
+    }else{
+      u.email = email || u.email;
+      u.name = String(meta.name || meta.full_name || u.name || email.split('@')[0] || 'User');
+      u.username = String(meta.username || u.username || '');
+      u.role = 'user';
+    }
+
+    current = u;
+    save();
+    return u;
+  }
+
+  async function submitAuthSupabase(){
+    const n = document.getElementById('authName').value.trim();
+    const un = document.getElementById('authUsername').value.trim();
+    const e = document.getElementById('authEmail').value.trim().toLowerCase();
+    const p = document.getElementById('authPass').value;
+    const cp = document.getElementById('authConfirm').value;
+
+    if(!e || !p || (authMode==='register' && (!n || !un || !cp))){
+      return toast('Please fill all fields');
+    }
+
+    if(authMode==='register'){
+      if(p !== cp) return toast('Passwords do not match');
+      if(!document.getElementById('authTerms').checked){
+        return toast('Please agree to Terms & Conditions');
+      }
+
+      try{
+        const {data, error} = await sb.auth.signUp({
+          email: e,
+          password: p,
+          options: {
+            data: {
+              name: n,
+              username: un
+            }
+          }
+        });
+
+        if(error) throw error;
+
+        /*
+         * Supabase may return a session immediately when email confirmation
+         * is disabled, or null when email confirmation is enabled.
+         */
+        if(data && data.user && data.session){
+          const u = localMirrorUser(data.user);
+          closeAuth();
+          saveSession();
+          enterApp('dashboard');
+          toast('Account created successfully');
+          return;
+        }
+
+        closeAuth();
+        toast('Account created. Check your email if verification is required.');
+      }catch(error){
+        toast(error.message || 'Registration failed');
+      }
+
+      return;
+    }
+
+    if(e === ADMIN_EMAIL){
+      adminPassOk(p).then(ok=>{
+        if(!ok) return toast('Invalid email or password');
+        current={id:0,name:'Admin',username:'admin',email:ADMIN_EMAIL,role:'admin',balance:0};
+        closeAuth();
+        saveSession();
+        enterApp('dashboard');
+        toast('Welcome back');
+      });
+      return;
+    }
+
+    try{
+      const {data, error} = await sb.auth.signInWithPassword({
+        email: e,
+        password: p
+      });
+
+      if(error) throw error;
+      if(!data || !data.user) throw new Error('Login failed');
+
+      localMirrorUser(data.user);
+      closeAuth();
+      saveSession();
+      enterApp('dashboard');
+      toast('Welcome back');
+    }catch(error){
+      const msg = String(error.message || '');
+      if(/email not confirmed/i.test(msg)){
+        return toast('Please verify your email first.');
+      }
+      toast(msg || 'Invalid email or password');
+    }
+  }
+
+  window.submitAuth = submitAuthSupabase;
+
+  window.logout = async function(){
+    try{
+      await sb.auth.signOut();
+    }catch(e){}
+
+    current = null;
+    localStorage.removeItem(KEY+'_session');
+    document.getElementById('app').style.display='none';
+    document.getElementById('landing').style.display='block';
+    scrollToId('landing');
+  };
+
+  async function bootSupabase(){
+    try{
+      const {data, error} = await sb.auth.getSession();
+      if(error) throw error;
+
+      if(data && data.session && data.session.user){
+        localMirrorUser(data.session.user);
+        lastPage = 'dashboard';
+        enterApp(lastPage);
+        return;
+      }
+
+      /*
+       * Keep the existing admin login available without putting the admin
+       * password into Supabase Auth.
+       */
+      try{
+        const local = JSON.parse(
+          localStorage.getItem(KEY+'_session') || 'null'
+        );
+        if(local && local.role === 'admin' && local.userId === 0){
+          current={
+            id:0,
+            name:'Admin',
+            username:'admin',
+            email:ADMIN_EMAIL,
+            role:'admin',
+            balance:0
+          };
+          lastPage = local.page || 'dashboard';
+          enterApp(lastPage);
+        }
+      }catch(e){}
+    }catch(error){
+      console.error('Supabase session bootstrap failed:', error);
+    }
+  }
+
+  sb.auth.onAuthStateChange(function(event, session){
+    if(event === 'SIGNED_OUT'){
+      current = null;
+    }
+  });
+
+  window.addEventListener('load', function(){
+    setTimeout(bootSupabase, 0);
+  });
+})();
+</script>
+
 </body></html>
