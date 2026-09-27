@@ -566,6 +566,99 @@ footer > div:first-child{
 html.asfu-session-boot #landing{display:none!important}
 html.asfu-session-boot #app{display:block!important;visibility:hidden}
 </style>
+
+<style id="asfu-mobile-layout-only-fix">
+/* MOBILE LAYOUT ONLY — no desktop styles/functions changed */
+@media (max-width: 700px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden !important;
+  }
+  body { -webkit-text-size-adjust: 100%; }
+  *, *::before, *::after { box-sizing: border-box; }
+
+  .topbar {
+    width: 100%;
+    max-width: 100vw;
+    min-width: 0;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .brand { min-width: 0 !important; }
+  .brandLogo { max-width: 72px; }
+
+  .hero, .section, .footer, .layout, .main {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  .hero {
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+    gap: 24px !important;
+  }
+  .section {
+    padding-left: 5% !important;
+    padding-right: 5% !important;
+  }
+  .main { padding-left: 15px !important; padding-right: 15px !important; }
+
+  .grid, .stats, .two {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  .card, .notice, .file, .payment-flow,
+  .payment-flow > *, .payment-flow .card,
+  .payment-amount-card, .payment-method-preview {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  img, video, canvas, iframe, svg {
+    max-width: 100%;
+  }
+  input, select, textarea, button {
+    max-width: 100%;
+  }
+
+  .pageHead {
+    min-width: 0 !important;
+    flex-wrap: wrap !important;
+  }
+  .pageHead > * { min-width: 0 !important; max-width: 100%; }
+
+  .tableWrap, .ordersTableWrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table { min-width: 0; }
+  .table th, .table td { max-width: 100%; }
+
+  .supportBox { min-width: 0 !important; flex-wrap: wrap !important; }
+  .orderTarget { max-width: 100% !important; }
+
+  .modal, .modalbox, .authbox, .emailCheckBox {
+    max-width: calc(100vw - 24px) !important;
+    min-width: 0 !important;
+  }
+
+  #landing, #app { width: 100% !important; max-width: 100vw !important; min-width: 0 !important; }
+  #page-funds { max-width: 100vw !important; }
+}
+
+@media (max-width: 380px) {
+  .topbar { padding-left: 8px !important; padding-right: 8px !important; }
+  .main { padding-left: 10px !important; padding-right: 10px !important; }
+  .hero, .section { padding-left: 4% !important; padding-right: 4% !important; }
+}
+</style>
 </head>
 <body>
 <div id="landing">
@@ -908,7 +1001,7 @@ function resetPaymentFlow(){
   if(urlEl)urlEl.value='';
   if(shotEl)shotEl.value='';
 }
-async function submitPayment(){
+function submitPayment(){
   const amount=currentPaymentAmount;
   const u=document.getElementById('utr').value.trim();
   const f=document.getElementById('shot').files[0];
@@ -919,56 +1012,18 @@ async function submitPayment(){
 
   const referenceCode=currentPaymentReference||makePaymentReference();
   const reader=new FileReader();
-  reader.onload=async()=>{
-    try{
-      if(!window.asfuSupabase) throw new Error('Supabase is not ready. Please refresh and try again.');
-      const sessionResult=await window.asfuSupabase.auth.getSession();
-      const accessToken=sessionResult?.data?.session?.access_token;
-      if(!accessToken) throw new Error('Your login session has expired. Please login again.');
-
-      const response=await fetch('/api/payment',{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer '+accessToken
-        },
-        body:JSON.stringify({
-          amount,
-          utr:u,
-          payment_reference:referenceCode,
-          file_name:f.name,
-          file_data:reader.result
-        })
-      });
-
-      const data=await response.json().catch(()=>({}));
-      if(!response.ok) throw new Error(data.error||'Payment request failed');
-
-      const saved=data.payment||{};
-      db.payments.push({
-        id:saved.id||db.next.payment++,
-        userId:current.id,
-        amount,
-        utr:u,
-        file:f.name,
-        fileData:reader.result,
-        url,
-        referenceCode,
-        status:saved.status||'Pending',
-        date:saved.created_at?new Date(saved.created_at).toLocaleString():new Date().toLocaleString(),
-        serverId:saved.id||null
-      });
-      save();
-      renderPayments();
-      document.getElementById('utr').value='';
-      document.getElementById('shot').value='';
-      if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
-      toast('Payment submitted for manual verification');
-      currentPaymentReference='';
-    }catch(error){
-      console.error('Payment submission failed:',error);
-      toast(error.message||'Payment request failed');
-    }
+  reader.onload=()=>{
+    db.payments.push({
+      id:db.next.payment++,userId:current.id,amount,utr:u,file:f.name,fileData:reader.result,url,
+      referenceCode,status:'Pending',date:new Date().toLocaleString()
+    });
+    save();
+    renderPayments();
+    document.getElementById('utr').value='';
+    document.getElementById('shot').value='';
+    if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
+    toast('Payment submitted for manual verification');
+    currentPaymentReference='';
   };
   reader.readAsDataURL(f);
 }
@@ -983,62 +1038,8 @@ function openTicket(){let orderId=ticketOrderId.value.trim(),issueType=ticketIss
 function renderTickets(){let a=db.tickets.filter(x=>x.userId===current.id);ticketsList.innerHTML=a.length?a.slice().reverse().map(x=>`<div class="notice" style="margin:8px 0"><b>#${x.id} ${esc(x.subject)}</b><br><small>${esc(x.issueType||'General Issue')}${x.orderId?` • Order #${esc(x.orderId)}`:''}</small><br>${esc(x.msg)}<br><span class="pill ${x.status==='Resolved'?'green':x.status==='In Progress'?'yellow':''}">${esc(x.status)}</span></div>`).join(''):'No tickets.'}
 function saveProfile(){let u=db.users.find(x=>x.id===current.id);u.name=profileName.value.trim()||u.name;current=u;save();document.getElementById('welcomeUser').textContent=current.name;toast('Profile saved')}
 function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.length;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.filter(t=>t.userId===u.id).length}
-async function renderAdmin(){
-  if(current.role!=='admin')return;
-  adminUsers.textContent=db.users.length;
-  adminOrders.textContent=db.orders.length;
-  adminPayments.textContent=db.payments.filter(p=>p.status==='Pending').length;
-  adminTickets.textContent=db.tickets.length;
-
-  const adminTicketBox=document.getElementById('adminTicketsList');
-  if(adminTicketBox){
-    adminTicketBox.innerHTML=db.tickets.length?db.tickets.slice().reverse().map(t=>{
-      let u=db.users.find(x=>String(x.id)===String(t.userId));
-      return `<div class="adminTicket"><div class="adminTicketHead"><div><div class="adminTicketTitle">#${t.id} ${esc(t.subject||'Support Ticket')}</div><div class="muted" style="font-size:10px;margin-top:3px">${esc(t.date||'')}</div></div><span class="pill adminTicketStatus ${t.status==='Resolved'?'green':t.status==='In Progress'?'yellow':''}">${esc(t.status||'Open')}</span></div><div class="adminTicketMeta"><div><b>User:</b> ${esc(u?.name||'Unknown')}</div><div><b>Email:</b> ${esc(u?.email||'')}</div><div><b>Issue:</b> ${esc(t.issueType||'General Issue')}</div><div><b>Order ID:</b> ${t.orderId?`#${esc(t.orderId)}`:'Not provided'}</div></div><div class="adminTicketIssue"><b>Issue details</b><br>${esc(t.msg||'')}</div><div class="adminTicketActions"><button class="btn secondary" onclick="setTicketStatus(${t.id},'In Progress')">In Progress</button><button class="btn" onclick="setTicketStatus(${t.id},'Resolved')">Resolve</button><button class="btn danger" onclick="setTicketStatus(${t.id},'Closed')">Close</button></div></div>`
-    }).join(''):'No tickets yet.';
-  }
-
-  const token=localStorage.getItem(KEY+'_admin_api_session')||'';
-  let serverPayments=[];
-  if(token){
-    try{
-      const response=await fetch('/api/admin/payments',{headers:{'x-admin-session':token}});
-      const data=await response.json().catch(()=>({}));
-      if(response.ok && Array.isArray(data.payments)) serverPayments=data.payments;
-      else if(response.status===401) localStorage.removeItem(KEY+'_admin_api_session');
-    }catch(error){
-      console.error('Admin payments load failed:',error);
-    }
-  }
-
-  adminPayments.textContent=serverPayments.filter(p=>p.status==='Pending').length;
-  adminPaymentsList.innerHTML=serverPayments.length?serverPayments.map(p=>{
-    let u=db.users.find(x=>String(x.id)===String(p.user_id));
-    const screenshot=p.screenshot_url?`<img src="${esc(p.screenshot_url)}" alt="Payment screenshot" style="max-width:260px;max-height:420px;border-radius:12px;margin:8px 0;display:block">`:'';
-    return `<div class="notice" style="margin:8px 0"><b>#${esc(p.id)}</b> ${esc(u?.name||'')} • ₹${Number(p.amount||0).toFixed(2)} • UTR ${esc(p.utr||'')} • ${esc(p.status||'Pending')}<br><b>Transaction Note / Admin Reference:</b> ${esc(p.payment_reference||'Not available')}<br>${screenshot}<small>${esc(p.created_at?new Date(p.created_at).toLocaleString():'')}</small><br>${p.status==='Pending'?`<button class="btn" onclick="verifyPayment('${esc(p.id)}','Approved')">✓ Approve Payment</button> <button class="btn danger" onclick="verifyPayment('${esc(p.id)}','Rejected')">✕ Reject</button>`:`<small>Reviewed: ${esc(p.status||'')}</small>`}</div>`;
-  }).join(''):'No payment requests.';
-
-  adminOrdersBody.innerHTML=db.orders.length?db.orders.map(o=>`<tr><td>#${o.id}</td><td>${esc(db.users.find(u=>u.id===o.userId)?.name||'')}</td><td>${esc(o.service)}</td><td><a href="${esc(o.target)}" target="_blank" rel="noopener">${esc(o.target)}</a></td><td>${o.qty}</td><td>₹${o.amount.toFixed(2)}</td><td>${o.status}</td><td><button class="btn" onclick="setOrder(${o.id},'Completed')">Complete</button> <button class="btn danger" onclick="setOrder(${o.id},'Cancelled')">Cancel</button></td></tr>`).join(''):'<tr><td colspan="8" class="muted">No orders.</td></tr>';
-  serviceAdmin.innerHTML=Object.entries(services).map(([c,arr])=>`<p><b>${c}</b>: ${arr.map(x=>x[0]+' — ₹'+x[1]).join(' | ')}</p>`).join('');
-}
-async function verifyPayment(id,status){
-  if(current.role!=='admin')return;
-  const token=localStorage.getItem(KEY+'_admin_api_session')||'';
-  if(!token)return toast('Admin session expired. Please login again.');
-  try{
-    const response=await fetch('/api/admin/payments/'+encodeURIComponent(id)+'/status',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-admin-session':token},
-      body:JSON.stringify({status})
-    });
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(data.error||'Could not update payment');
-    await renderAdmin();
-    toast('Payment '+status);
-  }catch(error){
-    toast(error.message||'Could not update payment');
-  }
-}
+function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminPayments.textContent=db.payments.filter(p=>p.status==='Pending').length;adminTickets.textContent=db.tickets.length;const adminTicketBox=document.getElementById('adminTicketsList');if(adminTicketBox){adminTicketBox.innerHTML=db.tickets.length?db.tickets.slice().reverse().map(t=>{let u=db.users.find(x=>String(x.id)===String(t.userId));return `<div class="adminTicket"><div class="adminTicketHead"><div><div class="adminTicketTitle">#${t.id} ${esc(t.subject||'Support Ticket')}</div><div class="muted" style="font-size:10px;margin-top:3px">${esc(t.date||'')}</div></div><span class="pill adminTicketStatus ${t.status==='Resolved'?'green':t.status==='In Progress'?'yellow':''}">${esc(t.status||'Open')}</span></div><div class="adminTicketMeta"><div><b>User:</b> ${esc(u?.name||'Unknown')}</div><div><b>Email:</b> ${esc(u?.email||'')}</div><div><b>Issue:</b> ${esc(t.issueType||'General Issue')}</div><div><b>Order ID:</b> ${t.orderId?`#${esc(t.orderId)}`:'Not provided'}</div></div><div class="adminTicketIssue"><b>Issue details</b><br>${esc(t.msg||'')}</div><div class="adminTicketActions"><button class="btn secondary" onclick="setTicketStatus(${t.id},'In Progress')">In Progress</button><button class="btn" onclick="setTicketStatus(${t.id},'Resolved')">Resolve</button><button class="btn danger" onclick="setTicketStatus(${t.id},'Closed')">Close</button></div></div>`}).join(''):'No tickets yet.';}adminPaymentsList.innerHTML=db.payments.length?db.payments.slice().reverse().map(p=>{let u=db.users.find(x=>x.id===p.userId);return `<div class="notice" style="margin:8px 0"><b>#${p.id}</b> ${esc(u?.name||'')} • ₹${p.amount.toFixed(2)} • UTR ${esc(p.utr)} • ${p.status}<br><b>Transaction Note / Admin Reference:</b> ${esc(p.referenceCode||'Not available')}<br>${p.url?`URL: <a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a><br>`:''}${p.fileData?`<img src="${p.fileData}" alt="Payment screenshot" style="max-width:260px;max-height:420px;border-radius:12px;margin:8px 0;display:block">`:''}<small>${esc(p.file||'')} • ${esc(p.date||'')}</small><br>${p.status==='Pending'?`<button class="btn" onclick="verifyPayment(${p.id},'Approved')">✓ Approve Payment</button> <button class="btn danger" onclick="verifyPayment(${p.id},'Rejected')">✕ Reject</button>`:`<small>Reviewed: ${esc(p.status)}</small>`}</div>`}).join(''):'No payment requests.';adminOrdersBody.innerHTML=db.orders.length?db.orders.map(o=>`<tr><td>#${o.id}</td><td>${esc(db.users.find(u=>u.id===o.userId)?.name||'')}</td><td>${esc(o.service)}</td><td><a href="${esc(o.target)}" target="_blank" rel="noopener">${esc(o.target)}</a></td><td>${o.qty}</td><td>₹${o.amount.toFixed(2)}</td><td>${o.status}</td><td><button class="btn" onclick="setOrder(${o.id},'Completed')">Complete</button> <button class="btn danger" onclick="setOrder(${o.id},'Cancelled')">Cancel</button></td></tr>`).join(''):'<tr><td colspan="8" class="muted">No orders.</td></tr>';serviceAdmin.innerHTML=Object.entries(services).map(([c,arr])=>`<p><b>${c}</b>: ${arr.map(x=>x[0]+' — ₹'+x[1]).join(' | ')}</p>`).join('')}
+function verifyPayment(id,status){let p=db.payments.find(x=>x.id===id);if(!p)return;if(p.status!=='Pending')return toast('Already reviewed');p.status=status;if(status==='Approved'){let u=db.users.find(x=>x.id===p.userId);u.balance+=p.amount}save();renderAdmin();toast('Payment '+status)}
 function setTicketStatus(id,status){let t=db.tickets.find(x=>x.id===id);if(!t)return;t.status=status;save();renderAdmin();toast('Ticket status updated')}
 function setOrder(id,status){let o=db.orders.find(x=>x.id===id);if(o){o.status=status;save();renderAdmin();toast('Order updated')}}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -1297,23 +1298,14 @@ loadServices();
     }
 
     if(e === ADMIN_EMAIL){
-      try{
-        const response=await fetch('/api/admin/login',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({email:e,password:p})
-        });
-        const data=await response.json().catch(()=>({}));
-        if(!response.ok) throw new Error(data.error||'Invalid email or password');
-        localStorage.setItem(KEY+'_admin_api_session',String(data.token||''));
+      adminPassOk(p).then(ok=>{
+        if(!ok) return toast('Invalid email or password');
         current={id:0,name:'Admin',username:'admin',email:ADMIN_EMAIL,role:'admin',balance:0};
         closeAuth();
         saveSession();
         enterApp('dashboard');
         toast('Welcome back');
-      }catch(error){
-        toast(error.message||'Invalid email or password');
-      }
+      });
       return;
     }
 
@@ -1346,7 +1338,6 @@ loadServices();
     // Clear the local Supabase session immediately so logout does not wait for a refresh.
     current = null;
     localStorage.removeItem(KEY+'_session');
-    localStorage.removeItem(KEY+'_admin_api_session');
     try{ sb.auth.signOut({scope:'local'}).catch(()=>{}); }catch(e){}
     document.getElementById('app').style.display='none';
     document.getElementById('landing').style.display='block';
@@ -1405,173 +1396,6 @@ loadServices();
   window.addEventListener('load', function(){
     setTimeout(bootSupabase, 0);
   });
-})();
-</script>
-
-
-<script>
-/* ASFU payment sync + logout patch. Uses the existing Supabase auth and payment UI. */
-(function(){
-  const PAYMENT_API = (window.ASFU_API_BASE || '/api').replace(/\/$/,'');
-  const ADMIN_TOKEN_KEY = 'asfu_admin_api_session';
-
-  async function getUserToken(){
-    try{
-      const sb=window.asfuSupabase;
-      if(!sb) return '';
-      const {data}=await sb.auth.getSession();
-      return data?.session?.access_token || '';
-    }catch(e){ return ''; }
-  }
-
-  async function jsonFetch(path, options={}){
-    const r=await fetch(PAYMENT_API+path, options);
-    const data=await r.json().catch(()=>({error:'Invalid server response'}));
-    if(!r.ok || data.error) throw new Error(data.error || 'Request failed');
-    return data;
-  }
-
-  async function loadMyPayments(){
-    const token=await getUserToken();
-    if(!token) return [];
-    const data=await jsonFetch('/payments/mine',{headers:{Authorization:'Bearer '+token}});
-    return Array.isArray(data.payments)?data.payments:[];
-  }
-
-  window.submitPayment = function(){
-    const amount=Number(currentPaymentAmount||0);
-    const u=(document.getElementById('utr')?.value||'').trim();
-    const f=document.getElementById('shot')?.files?.[0];
-    const url=(document.getElementById('paymentUrl')?.value||'').trim();
-    if(!amount) return toast('Choose a payment amount first');
-    if(!u||!f) return toast('UTR and payment screenshot are required');
-    if(url&&!/^https?:\/\//i.test(url)) return toast('Enter a valid URL');
-
-    const btn=document.querySelector('#paymentScreenStep .payment-form .btn:not(.secondary)');
-    if(btn){btn.disabled=true;btn.textContent='Submitting...';}
-
-    const reader=new FileReader();
-    reader.onload=async function(){
-      try{
-        const token=await getUserToken();
-        if(!token) throw new Error('Your login session has expired. Please login again.');
-        const data=await jsonFetch('/payment',{
-          method:'POST',
-          headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
-          body:JSON.stringify({
-            amount,
-            utr:u,
-            payment_reference:currentPaymentReference||'',
-            file_name:f.name,
-            file_data:String(reader.result||''),
-            payment_url:url
-          })
-        });
-        if(!data?.ok) throw new Error('Payment request failed');
-        document.getElementById('utr').value='';
-        document.getElementById('shot').value='';
-        if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
-        currentPaymentReference='';
-        try{localStorage.removeItem(KEY+'_payment_flow_'+String(current?.id??'guest'));}catch(e){}
-        await window.renderPayments();
-        toast('Payment submitted for manual verification');
-      }catch(e){
-        toast(e.message||'Payment request failed');
-      }finally{
-        if(btn){btn.disabled=false;btn.textContent='Submit for Verification';}
-      }
-    };
-    reader.onerror=()=>{
-      if(btn){btn.disabled=false;btn.textContent='Submit for Verification';}
-      toast('Could not read the screenshot');
-    };
-    reader.readAsDataURL(f);
-  };
-
-  window.renderPayments = async function(){
-    const box=document.getElementById('paymentsList');
-    if(!box) return;
-    try{
-      const payments=await loadMyPayments();
-      box.innerHTML=payments.length ? payments.map(x=>`<div class="notice" style="margin:8px 0">#${esc(x.id)} • ₹${Number(x.amount||0).toFixed(2)} • UTR ${esc(x.utr||'')} • <span class="pill yellow">${esc(x.status||'Pending')}</span><br><small>${esc(x.payment_reference||'')}</small></div>`).join('') : 'No requests yet.';
-    }catch(e){
-      box.innerHTML='Unable to load payment requests.';
-    }
-  };
-
-  async function adminPayments(){
-    const token=sessionStorage.getItem(ADMIN_TOKEN_KEY)||'';
-    if(!token) throw new Error('Admin session is not connected to the payment backend. Login again.');
-    return jsonFetch('/admin/payments',{headers:{'x-admin-session':token}});
-  }
-
-  window.renderAdmin = async function(){
-    if(!current || current.role!=='admin') return;
-    try{
-      const result=await adminPayments();
-      const payments=Array.isArray(result.payments)?result.payments:[];
-      const count=document.getElementById('adminPayments');
-      if(count) count.textContent=payments.filter(p=>p.status==='Pending').length;
-      const box=document.getElementById('adminPaymentsList');
-      if(!box) return;
-      box.innerHTML=payments.length ? payments.map(p=>`<div class="notice" style="margin:8px 0"><b>#${esc(p.id)}</b> • ₹${Number(p.amount||0).toFixed(2)} • UTR ${esc(p.utr||'')} • ${esc(p.status||'Pending')}<br><b>Payment Reference:</b> ${esc(p.payment_reference||'Not available')}<br>${p.screenshot_url?`<img src="${esc(p.screenshot_url)}" alt="Payment screenshot" style="max-width:260px;max-height:420px;border-radius:12px;margin:8px 0;display:block">`:''}<small>${esc(p.created_at||'')}</small><br>${p.status==='Pending'?`<button class="btn" onclick="verifyPayment('${esc(p.id)}','Approved')">✓ Approve Payment</button> <button class="btn danger" onclick="verifyPayment('${esc(p.id)}','Rejected')">✕ Reject</button>`:`<small>Reviewed: ${esc(p.status)}</small>`}</div>`).join(''):'No payment requests.';
-    }catch(e){
-      const box=document.getElementById('adminPaymentsList');
-      if(box) box.innerHTML=`<div class="notice">${esc(e.message||'Could not load payments')}</div>`;
-    }
-  };
-
-  window.verifyPayment = async function(id,status){
-    try{
-      const token=sessionStorage.getItem(ADMIN_TOKEN_KEY)||'';
-      if(!token) throw new Error('Admin session expired. Login again.');
-      await jsonFetch('/admin/payments/'+encodeURIComponent(id)+'/status',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-admin-session':token},
-        body:JSON.stringify({status})
-      });
-      await window.renderAdmin();
-      toast('Payment '+status);
-    }catch(e){toast(e.message||'Could not update payment');}
-  };
-
-  const oldSubmitAuth=window.submitAuth;
-  window.submitAuth=async function(){
-    const email=(document.getElementById('authEmail')?.value||'').trim().toLowerCase();
-    const password=document.getElementById('authPass')?.value||'';
-    if(email===String(window.ASFU_ADMIN_EMAIL||'asifreza6741@gmail.com').toLowerCase() && password){
-      try{
-        const data=await jsonFetch('/admin/login',{
-          method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({email,password})
-        });
-        sessionStorage.setItem(ADMIN_TOKEN_KEY,data.token);
-      }catch(e){
-        sessionStorage.removeItem(ADMIN_TOKEN_KEY);
-        return toast(e.message||'Admin login failed');
-      }
-    }
-    return oldSubmitAuth ? oldSubmitAuth() : undefined;
-  };
-
-  const oldLogout=window.logout;
-  window.logout=function(){
-    const token=sessionStorage.getItem(ADMIN_TOKEN_KEY);
-    if(token){
-      fetch(PAYMENT_API+'/admin/logout',{method:'POST',headers:{'x-admin-session':token}}).catch(()=>{});
-      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
-    }
-    if(oldLogout) oldLogout();
-  };
-
-  // When the admin page is opened, use the server-backed payment list instead of localStorage.
-  const oldPage=window.page;
-  window.page=function(name){
-    const result=oldPage?oldPage(name):undefined;
-    if(name==='funds' && current && current.role!=='admin') setTimeout(()=>window.renderPayments(),0);
-    if(name==='admin' && current && current.role==='admin') setTimeout(()=>window.renderAdmin(),0);
-    return result;
-  };
 })();
 </script>
 
