@@ -788,7 +788,7 @@ function page(id){
   if(id==='funds'){restorePaymentFlow();renderPayments();}
   if(id==='tickets')renderTickets();
   if(id==='profile'){profileName.value=current.name;profileEmail.value=current.email}
-  if(id==='admin')renderAdmin();
+  if(id==='admin'){renderAdmin();syncAdminPayments();}
   document.getElementById('side').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -908,7 +908,7 @@ function resetPaymentFlow(){
   if(urlEl)urlEl.value='';
   if(shotEl)shotEl.value='';
 }
-function submitPayment(){
+async function submitPayment(){
   const amount=currentPaymentAmount;
   const u=document.getElementById('utr').value.trim();
   const f=document.getElementById('shot').files[0];
@@ -919,21 +919,56 @@ function submitPayment(){
 
   const referenceCode=currentPaymentReference||makePaymentReference();
   const reader=new FileReader();
-  reader.onload=()=>{
-    db.payments.push({
-      id:db.next.payment++,userId:current.id,amount,utr:u,file:f.name,fileData:reader.result,url,
-      referenceCode,status:'Pending',date:new Date().toLocaleString()
-    });
-    save();
-    renderPayments();
-    document.getElementById('utr').value='';
-    document.getElementById('shot').value='';
-    if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
-    toast('Payment submitted for manual verification');
-    currentPaymentReference='';
+
+  reader.onload=async()=>{
+    const payment={
+      id:db.next.payment++,userId:current.id,amount,utr:u,file:f.name,
+      fileData:reader.result,url,referenceCode,status:'Pending',
+      date:new Date().toLocaleString()
+    };
+
+    try{
+      const r=await fetch((window.ASFU_API_BASE||'/api').replace(/\/$/,'')+'/payments',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payment)
+      });
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok||data.error)throw new Error(data.error||'Payment request could not be saved');
+      if(data.payment)Object.assign(payment,data.payment);
+
+      db.payments.push(payment);
+      save();
+      renderPayments();
+      document.getElementById('utr').value='';
+      document.getElementById('shot').value='';
+      if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
+      currentPaymentReference='';
+      toast('Payment submitted for manual verification');
+    }catch(error){
+      console.error('Payment submit failed:',error);
+      toast('Payment request submit nahi ho paaya');
+    }
   };
   reader.readAsDataURL(f);
 }
+
+async function syncAdminPayments(){
+  if(!current||current.role!=='admin')return;
+  try{
+    const r=await fetch((window.ASFU_API_BASE||'/api').replace(/\/$/,'')+'/payments');
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok||data.error)throw new Error(data.error||'Could not load payment requests');
+    if(Array.isArray(data.payments)){
+      db.payments=data.payments;
+      save();
+      renderAdmin();
+    }
+  }catch(error){
+    console.error('Admin payment sync failed:',error);
+  }
+}
+
 function renderPayments(){
   let a=db.payments.filter(x=>x.userId===current.id);
   document.getElementById('paymentsList').innerHTML=a.length?
