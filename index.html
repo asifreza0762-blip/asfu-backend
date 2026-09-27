@@ -776,17 +776,7 @@ function enterApp(initialPage){
   document.getElementById('app').style.visibility='visible';
   closeSide();
 }
-function logout(){
-  current=null;
-  localStorage.removeItem(KEY+'_session');
-  try{if(typeof sb!=='undefined'&&sb?.auth)sb.auth.signOut({scope:'local'}).catch(()=>{});}catch(e){}
-  const app=document.getElementById('app'),landing=document.getElementById('landing');
-  if(app){app.style.display='none';app.style.visibility='hidden'}
-  if(landing){landing.style.display='block';landing.style.visibility='visible'}
-  document.documentElement.classList.remove('asfu-session-boot');
-  try{history.replaceState({},document.title,window.location.pathname)}catch(e){}
-  scrollToId('landing');
-}
+function logout(){current=null;localStorage.removeItem(KEY+'_session');document.getElementById('app').style.display='none';document.getElementById('landing').style.display='block';scrollToId('landing')}
 function page(id){
   if(!current)return;
   lastPage=id;
@@ -798,7 +788,7 @@ function page(id){
   if(id==='funds'){restorePaymentFlow();renderPayments();}
   if(id==='tickets')renderTickets();
   if(id==='profile'){profileName.value=current.name;profileEmail.value=current.email}
-  if(id==='admin'){renderAdmin();syncAdminPayments();}
+  if(id==='admin')renderAdmin();
   document.getElementById('side').classList.remove('open');
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -918,7 +908,7 @@ function resetPaymentFlow(){
   if(urlEl)urlEl.value='';
   if(shotEl)shotEl.value='';
 }
-async function submitPayment(){
+function submitPayment(){
   const amount=currentPaymentAmount;
   const u=document.getElementById('utr').value.trim();
   const f=document.getElementById('shot').files[0];
@@ -929,34 +919,18 @@ async function submitPayment(){
 
   const referenceCode=currentPaymentReference||makePaymentReference();
   const reader=new FileReader();
-  reader.onload=async()=>{
-    const payment={
+  reader.onload=()=>{
+    db.payments.push({
       id:db.next.payment++,userId:current.id,amount,utr:u,file:f.name,fileData:reader.result,url,
       referenceCode,status:'Pending',date:new Date().toLocaleString()
-    };
-    try{
-      const apiBase=(window.ASFU_API_BASE||'https://asfu-backend.onrender.com/api').replace(/\/$/,'');
-      const r=await fetch(apiBase+'/payments',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payment)
-      });
-      const data=await r.json().catch(()=>({}));
-      if(!r.ok||data.error)throw new Error(data.error||'Payment request failed');
-      if(data.payment)Object.assign(payment,data.payment);
-      db.payments.push(payment);
-      save();
-      renderPayments();
-      document.getElementById('utr').value='';
-      document.getElementById('shot').value='';
-      if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
-      currentPaymentReference='';
-      resetPaymentFlow();
-      toast('Payment submitted for manual verification','success');
-    }catch(error){
-      console.error('Payment submit failed:',error);
-      toast(error.message||'Payment request submit nahi ho paaya');
-    }
+    });
+    save();
+    renderPayments();
+    document.getElementById('utr').value='';
+    document.getElementById('shot').value='';
+    if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
+    toast('Payment submitted for manual verification');
+    currentPaymentReference='';
   };
   reader.readAsDataURL(f);
 }
@@ -971,22 +945,6 @@ function openTicket(){let orderId=ticketOrderId.value.trim(),issueType=ticketIss
 function renderTickets(){let a=db.tickets.filter(x=>x.userId===current.id);ticketsList.innerHTML=a.length?a.slice().reverse().map(x=>`<div class="notice" style="margin:8px 0"><b>#${x.id} ${esc(x.subject)}</b><br><small>${esc(x.issueType||'General Issue')}${x.orderId?` • Order #${esc(x.orderId)}`:''}</small><br>${esc(x.msg)}<br><span class="pill ${x.status==='Resolved'?'green':x.status==='In Progress'?'yellow':''}">${esc(x.status)}</span></div>`).join(''):'No tickets.'}
 function saveProfile(){let u=db.users.find(x=>x.id===current.id);u.name=profileName.value.trim()||u.name;current=u;save();document.getElementById('welcomeUser').textContent=current.name;toast('Profile saved')}
 function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.length;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.filter(t=>t.userId===u.id).length}
-async function syncAdminPayments(){
-  if(!current||current.role!=='admin')return;
-  try{
-    const apiBase=(window.ASFU_API_BASE||'https://asfu-backend.onrender.com/api').replace(/\/$/,'');
-    const r=await fetch(apiBase+'/payments');
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok||data.error)throw new Error(data.error||'Could not load payment requests');
-    if(Array.isArray(data.payments)){
-      db.payments=data.payments;
-      save();
-      renderAdmin();
-    }
-  }catch(error){
-    console.error('Admin payment sync failed:',error);
-  }
-}
 function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminPayments.textContent=db.payments.filter(p=>p.status==='Pending').length;adminTickets.textContent=db.tickets.length;const adminTicketBox=document.getElementById('adminTicketsList');if(adminTicketBox){adminTicketBox.innerHTML=db.tickets.length?db.tickets.slice().reverse().map(t=>{let u=db.users.find(x=>String(x.id)===String(t.userId));return `<div class="adminTicket"><div class="adminTicketHead"><div><div class="adminTicketTitle">#${t.id} ${esc(t.subject||'Support Ticket')}</div><div class="muted" style="font-size:10px;margin-top:3px">${esc(t.date||'')}</div></div><span class="pill adminTicketStatus ${t.status==='Resolved'?'green':t.status==='In Progress'?'yellow':''}">${esc(t.status||'Open')}</span></div><div class="adminTicketMeta"><div><b>User:</b> ${esc(u?.name||'Unknown')}</div><div><b>Email:</b> ${esc(u?.email||'')}</div><div><b>Issue:</b> ${esc(t.issueType||'General Issue')}</div><div><b>Order ID:</b> ${t.orderId?`#${esc(t.orderId)}`:'Not provided'}</div></div><div class="adminTicketIssue"><b>Issue details</b><br>${esc(t.msg||'')}</div><div class="adminTicketActions"><button class="btn secondary" onclick="setTicketStatus(${t.id},'In Progress')">In Progress</button><button class="btn" onclick="setTicketStatus(${t.id},'Resolved')">Resolve</button><button class="btn danger" onclick="setTicketStatus(${t.id},'Closed')">Close</button></div></div>`}).join(''):'No tickets yet.';}adminPaymentsList.innerHTML=db.payments.length?db.payments.slice().reverse().map(p=>{let u=db.users.find(x=>x.id===p.userId);return `<div class="notice" style="margin:8px 0"><b>#${p.id}</b> ${esc(u?.name||'')} • ₹${p.amount.toFixed(2)} • UTR ${esc(p.utr)} • ${p.status}<br><b>Transaction Note / Admin Reference:</b> ${esc(p.referenceCode||'Not available')}<br>${p.url?`URL: <a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a><br>`:''}${p.fileData?`<img src="${p.fileData}" alt="Payment screenshot" style="max-width:260px;max-height:420px;border-radius:12px;margin:8px 0;display:block">`:''}<small>${esc(p.file||'')} • ${esc(p.date||'')}</small><br>${p.status==='Pending'?`<button class="btn" onclick="verifyPayment(${p.id},'Approved')">✓ Approve Payment</button> <button class="btn danger" onclick="verifyPayment(${p.id},'Rejected')">✕ Reject</button>`:`<small>Reviewed: ${esc(p.status)}</small>`}</div>`}).join(''):'No payment requests.';adminOrdersBody.innerHTML=db.orders.length?db.orders.map(o=>`<tr><td>#${o.id}</td><td>${esc(db.users.find(u=>u.id===o.userId)?.name||'')}</td><td>${esc(o.service)}</td><td><a href="${esc(o.target)}" target="_blank" rel="noopener">${esc(o.target)}</a></td><td>${o.qty}</td><td>₹${o.amount.toFixed(2)}</td><td>${o.status}</td><td><button class="btn" onclick="setOrder(${o.id},'Completed')">Complete</button> <button class="btn danger" onclick="setOrder(${o.id},'Cancelled')">Cancel</button></td></tr>`).join(''):'<tr><td colspan="8" class="muted">No orders.</td></tr>';serviceAdmin.innerHTML=Object.entries(services).map(([c,arr])=>`<p><b>${c}</b>: ${arr.map(x=>x[0]+' — ₹'+x[1]).join(' | ')}</p>`).join('')}
 function verifyPayment(id,status){let p=db.payments.find(x=>x.id===id);if(!p)return;if(p.status!=='Pending')return toast('Already reviewed');p.status=status;if(status==='Approved'){let u=db.users.find(x=>x.id===p.userId);u.balance+=p.amount}save();renderAdmin();toast('Payment '+status)}
 function setTicketStatus(id,status){let t=db.tickets.find(x=>x.id===id);if(!t)return;t.status=status;save();renderAdmin();toast('Ticket status updated')}
@@ -1005,7 +963,7 @@ loadServices();
 <script>
 /* ASFU SMMZZ API bridge - backend required for live provider integration. */
 (function(){
-  const API_BASE = (window.ASFU_API_BASE || 'https://asfu-backend.onrender.com/api').replace(/\/$/,'');
+  const API_BASE = (window.ASFU_API_BASE || '/api').replace(/\/$/,'');
   let liveServices = null;
   let providerOnline = false;
 
@@ -1345,6 +1303,173 @@ loadServices();
   window.addEventListener('load', function(){
     setTimeout(bootSupabase, 0);
   });
+})();
+</script>
+
+
+<script>
+/* ASFU payment sync + logout patch. Uses the existing Supabase auth and payment UI. */
+(function(){
+  const PAYMENT_API = (window.ASFU_API_BASE || '/api').replace(/\/$/,'');
+  const ADMIN_TOKEN_KEY = 'asfu_admin_api_session';
+
+  async function getUserToken(){
+    try{
+      const sb=window.asfuSupabase;
+      if(!sb) return '';
+      const {data}=await sb.auth.getSession();
+      return data?.session?.access_token || '';
+    }catch(e){ return ''; }
+  }
+
+  async function jsonFetch(path, options={}){
+    const r=await fetch(PAYMENT_API+path, options);
+    const data=await r.json().catch(()=>({error:'Invalid server response'}));
+    if(!r.ok || data.error) throw new Error(data.error || 'Request failed');
+    return data;
+  }
+
+  async function loadMyPayments(){
+    const token=await getUserToken();
+    if(!token) return [];
+    const data=await jsonFetch('/payments/mine',{headers:{Authorization:'Bearer '+token}});
+    return Array.isArray(data.payments)?data.payments:[];
+  }
+
+  window.submitPayment = function(){
+    const amount=Number(currentPaymentAmount||0);
+    const u=(document.getElementById('utr')?.value||'').trim();
+    const f=document.getElementById('shot')?.files?.[0];
+    const url=(document.getElementById('paymentUrl')?.value||'').trim();
+    if(!amount) return toast('Choose a payment amount first');
+    if(!u||!f) return toast('UTR and payment screenshot are required');
+    if(url&&!/^https?:\/\//i.test(url)) return toast('Enter a valid URL');
+
+    const btn=document.querySelector('#paymentScreenStep .payment-form .btn:not(.secondary)');
+    if(btn){btn.disabled=true;btn.textContent='Submitting...';}
+
+    const reader=new FileReader();
+    reader.onload=async function(){
+      try{
+        const token=await getUserToken();
+        if(!token) throw new Error('Your login session has expired. Please login again.');
+        const data=await jsonFetch('/payment',{
+          method:'POST',
+          headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+          body:JSON.stringify({
+            amount,
+            utr:u,
+            payment_reference:currentPaymentReference||'',
+            file_name:f.name,
+            file_data:String(reader.result||''),
+            payment_url:url
+          })
+        });
+        if(!data?.ok) throw new Error('Payment request failed');
+        document.getElementById('utr').value='';
+        document.getElementById('shot').value='';
+        if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
+        currentPaymentReference='';
+        try{localStorage.removeItem(KEY+'_payment_flow_'+String(current?.id??'guest'));}catch(e){}
+        await window.renderPayments();
+        toast('Payment submitted for manual verification');
+      }catch(e){
+        toast(e.message||'Payment request failed');
+      }finally{
+        if(btn){btn.disabled=false;btn.textContent='Submit for Verification';}
+      }
+    };
+    reader.onerror=()=>{
+      if(btn){btn.disabled=false;btn.textContent='Submit for Verification';}
+      toast('Could not read the screenshot');
+    };
+    reader.readAsDataURL(f);
+  };
+
+  window.renderPayments = async function(){
+    const box=document.getElementById('paymentsList');
+    if(!box) return;
+    try{
+      const payments=await loadMyPayments();
+      box.innerHTML=payments.length ? payments.map(x=>`<div class="notice" style="margin:8px 0">#${esc(x.id)} • ₹${Number(x.amount||0).toFixed(2)} • UTR ${esc(x.utr||'')} • <span class="pill yellow">${esc(x.status||'Pending')}</span><br><small>${esc(x.payment_reference||'')}</small></div>`).join('') : 'No requests yet.';
+    }catch(e){
+      box.innerHTML='Unable to load payment requests.';
+    }
+  };
+
+  async function adminPayments(){
+    const token=sessionStorage.getItem(ADMIN_TOKEN_KEY)||'';
+    if(!token) throw new Error('Admin session is not connected to the payment backend. Login again.');
+    return jsonFetch('/admin/payments',{headers:{'x-admin-session':token}});
+  }
+
+  window.renderAdmin = async function(){
+    if(!current || current.role!=='admin') return;
+    try{
+      const result=await adminPayments();
+      const payments=Array.isArray(result.payments)?result.payments:[];
+      const count=document.getElementById('adminPayments');
+      if(count) count.textContent=payments.filter(p=>p.status==='Pending').length;
+      const box=document.getElementById('adminPaymentsList');
+      if(!box) return;
+      box.innerHTML=payments.length ? payments.map(p=>`<div class="notice" style="margin:8px 0"><b>#${esc(p.id)}</b> • ₹${Number(p.amount||0).toFixed(2)} • UTR ${esc(p.utr||'')} • ${esc(p.status||'Pending')}<br><b>Payment Reference:</b> ${esc(p.payment_reference||'Not available')}<br>${p.screenshot_url?`<img src="${esc(p.screenshot_url)}" alt="Payment screenshot" style="max-width:260px;max-height:420px;border-radius:12px;margin:8px 0;display:block">`:''}<small>${esc(p.created_at||'')}</small><br>${p.status==='Pending'?`<button class="btn" onclick="verifyPayment('${esc(p.id)}','Approved')">✓ Approve Payment</button> <button class="btn danger" onclick="verifyPayment('${esc(p.id)}','Rejected')">✕ Reject</button>`:`<small>Reviewed: ${esc(p.status)}</small>`}</div>`).join(''):'No payment requests.';
+    }catch(e){
+      const box=document.getElementById('adminPaymentsList');
+      if(box) box.innerHTML=`<div class="notice">${esc(e.message||'Could not load payments')}</div>`;
+    }
+  };
+
+  window.verifyPayment = async function(id,status){
+    try{
+      const token=sessionStorage.getItem(ADMIN_TOKEN_KEY)||'';
+      if(!token) throw new Error('Admin session expired. Login again.');
+      await jsonFetch('/admin/payments/'+encodeURIComponent(id)+'/status',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-admin-session':token},
+        body:JSON.stringify({status})
+      });
+      await window.renderAdmin();
+      toast('Payment '+status);
+    }catch(e){toast(e.message||'Could not update payment');}
+  };
+
+  const oldSubmitAuth=window.submitAuth;
+  window.submitAuth=async function(){
+    const email=(document.getElementById('authEmail')?.value||'').trim().toLowerCase();
+    const password=document.getElementById('authPass')?.value||'';
+    if(email===String(window.ASFU_ADMIN_EMAIL||'asifreza6741@gmail.com').toLowerCase() && password){
+      try{
+        const data=await jsonFetch('/admin/login',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({email,password})
+        });
+        sessionStorage.setItem(ADMIN_TOKEN_KEY,data.token);
+      }catch(e){
+        sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+        return toast(e.message||'Admin login failed');
+      }
+    }
+    return oldSubmitAuth ? oldSubmitAuth() : undefined;
+  };
+
+  const oldLogout=window.logout;
+  window.logout=function(){
+    const token=sessionStorage.getItem(ADMIN_TOKEN_KEY);
+    if(token){
+      fetch(PAYMENT_API+'/admin/logout',{method:'POST',headers:{'x-admin-session':token}}).catch(()=>{});
+      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+    }
+    if(oldLogout) oldLogout();
+  };
+
+  // When the admin page is opened, use the server-backed payment list instead of localStorage.
+  const oldPage=window.page;
+  window.page=function(name){
+    const result=oldPage?oldPage(name):undefined;
+    if(name==='funds' && current && current.role!=='admin') setTimeout(()=>window.renderPayments(),0);
+    if(name==='admin' && current && current.role==='admin') setTimeout(()=>window.renderAdmin(),0);
+    return result;
+  };
 })();
 </script>
 
