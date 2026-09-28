@@ -647,91 +647,6 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
   #page-admin .adminKpis{grid-template-columns:1fr 1fr}
 }
 </style>
-<style id="asfu-mobile-fullwidth-fix">
-@media (max-width: 900px){
-  html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
-  #app,.app,.layout,.main,.page,.page.active{width:100%!important;max-width:100%!important;min-width:0!important}
-  .layout{grid-template-columns:1fr!important}
-  .main{margin:0!important;padding:20px!important}
-  .pageHead,.stats,.two,.grid{min-width:0;max-width:100%}
-  .stat,.card,.tableWrap{min-width:0;max-width:100%}
-}
-@media (max-width:600px){
-  .main{padding:14px!important}
-  .pageHead{width:100%;max-width:100%;flex-wrap:wrap}
-  .stats,.two,.grid{width:100%;grid-template-columns:1fr!important}
-  .tableWrap{width:100%;overflow-x:hidden}
-}
-</style>
-
-<style id="asfu-mobile-orders-fix">
-@media (max-width:700px){
-  #page-orders .main,
-  #page-orders{
-    width:100%;
-    max-width:100%;
-    min-width:0;
-  }
-  #page-orders .ordersTableWrap{
-    width:100%;
-    max-width:100%;
-    overflow:hidden;
-    box-sizing:border-box;
-    padding:0;
-  }
-  #page-orders .ordersTable{
-    width:100% !important;
-    min-width:0 !important;
-    max-width:100% !important;
-    table-layout:fixed;
-  }
-  #page-orders .ordersTable tbody,
-  #page-orders .ordersTable tr,
-  #page-orders .ordersTable td{
-    max-width:100% !important;
-    box-sizing:border-box;
-  }
-  #page-orders .ordersTable tr:has(.ordersEmpty){
-    min-height:240px;
-    display:flex !important;
-    align-items:center;
-    justify-content:center;
-  }
-  #page-orders .ordersTable td.ordersEmpty{
-    width:100% !important;
-    max-width:100% !important;
-    min-height:210px;
-    display:flex !important;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    text-align:center !important;
-    padding:34px 20px !important;
-    white-space:normal !important;
-    overflow:hidden;
-  }
-  #page-orders .ordersEmptyIcon{
-    width:58px;
-    height:58px;
-    display:grid;
-    place-items:center;
-    margin:0 auto 12px;
-    border-radius:18px;
-    background:linear-gradient(145deg,#102a49,#0a1a2f);
-    border:1px solid #29476e;
-    font-size:26px;
-  }
-  #page-orders .ordersEmpty b{
-    font-size:16px;
-    line-height:1.3;
-  }
-  #page-orders .ordersEmpty small{
-    max-width:280px;
-    line-height:1.5;
-    text-align:center;
-  }
-}
-</style>
 </head>
 <body>
 <div id="landing">
@@ -943,16 +858,19 @@ function enterApp(initialPage){
   closeSide();
 }
 function logout(){
+  if(!confirm('Are you sure you want to logout?')) return;
   current=null;
   localStorage.removeItem(KEY+'_session');
   sessionStorage.removeItem(KEY+'_admin_token');
-  try{if(window.asfuSupabase?.auth)window.asfuSupabase.auth.signOut({scope:'local'}).catch(()=>{});}catch(e){}
   const app=document.getElementById('app'),landing=document.getElementById('landing');
-  if(app){app.style.display='none';app.style.visibility='hidden';}
-  if(landing){landing.style.display='block';landing.style.visibility='visible';}
+  try{if(window.asfuSupabase?.auth)window.asfuSupabase.auth.signOut({scope:'local'}).catch(()=>{});}catch(e){}
+  closeSide();
+  if(app){app.style.setProperty('display','none','important');app.style.setProperty('visibility','hidden','important');}
+  if(landing){landing.style.setProperty('display','block','important');landing.style.setProperty('visibility','visible','important');}
   document.documentElement.classList.remove('asfu-session-boot');
   try{history.replaceState({},document.title,window.location.pathname)}catch(e){}
   scrollToId('landing');
+  toast('Signed out successfully','logout');
 }
 function page(id){
   if(!current)return;
@@ -1185,7 +1103,7 @@ function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=d
     const providerRate=Number(o.providerRate||found?.providerRate||0);
     const sellRate=Number(o.sellRatePerUnit||found?.ratePerUnit||0);
     const qty=Number(o.qty||0);
-    const fx=Number(window.__asfuProviderFx||0.85);
+    const fx=Number(window.__asfuProviderFx||85);
     if(providerRate>0&&fx>0) totalCost += qty*(providerRate*fx/1000);
   }
   const approvedFunds=db.payments.filter(p=>p.status==='Approved').reduce((n,p)=>n+Number(p.amount||0),0);
@@ -1219,9 +1137,6 @@ loadServices();
     if(!r.ok || data.error) throw new Error(data.error || 'API request failed');
     return data;
   }
-
-  // Expose the API bridge globally so the existing admin login handler can use it.
-  window.api = api;
 
   async function syncServices(){
     try{
@@ -1507,12 +1422,24 @@ loadServices();
   window.submitAuth = submitAuthSupabase;
 
   window.logout = function(){
-    // Clear the local Supabase session immediately so logout does not wait for a refresh.
+    if(!confirm('Are you sure you want to logout?')) return;
     current = null;
     localStorage.removeItem(KEY+'_session');
+    sessionStorage.removeItem(KEY+'_admin_token');
+    const app=document.getElementById('app');
+    const landing=document.getElementById('landing');
     try{ sb.auth.signOut({scope:'local'}).catch(()=>{}); }catch(e){}
-    document.getElementById('app').style.display='none';
-    document.getElementById('landing').style.display='block';
+    try{ closeSide(); }catch(e){}
+    if(app){
+      app.style.setProperty('display','none','important');
+      app.style.setProperty('visibility','hidden','important');
+    }
+    if(landing){
+      landing.style.setProperty('display','block','important');
+      landing.style.setProperty('visibility','visible','important');
+    }
+    document.documentElement.classList.remove('asfu-session-boot');
+    try{history.replaceState({},document.title,window.location.pathname)}catch(e){}
     scrollToId('landing');
     toast('Signed out successfully','logout');
   };
