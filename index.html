@@ -1100,7 +1100,7 @@ function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=d
     const providerRate=Number(o.providerRate||found?.providerRate||0);
     const sellRate=Number(o.sellRatePerUnit||found?.ratePerUnit||0);
     const qty=Number(o.qty||0);
-    const fx=Number(window.__asfuProviderFx||85);
+    const fx=Number(window.__asfuProviderFx||0.85);
     if(providerRate>0&&fx>0) totalCost += qty*(providerRate*fx/1000);
   }
   const approvedFunds=db.payments.filter(p=>p.status==='Approved').reduce((n,p)=>n+Number(p.amount||0),0);
