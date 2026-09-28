@@ -1065,7 +1065,7 @@ loadServices();
       Object.values(liveServices).flat().forEach(s=>{
         const providerRate=Number(s.providerRate||0);
         if(providerRate>0){
-          s.ratePer1k=providerRate*window.__asfuFX*SELL_MULTIPLIER;
+          s.ratePer1k=(providerRate*window.__asfuFX*SELL_MULTIPLIER)/1000;
           s.ratePerUnit=s.ratePer1k/1000;
         }
       });
