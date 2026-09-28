@@ -1004,7 +1004,7 @@ async function submitPayment(){
 }
 async function syncUserPayments(){
   if(!current||current.role==='admin')return;
-  try{const supa=window.asfuSupabase;if(!supa)return toast('Payment system is not ready. Please refresh and login again');const {data:{session}}=await supa.auth.getSession();const token=session?.access_token;if(!token)return;const data=await api('/payments',{headers:{'Authorization':'Bearer '+token}});if(Array.isArray(data.payments)){db.payments=data.payments.map(p=>({id:p.id,userId:p.user_id,amount:Number(p.amount||0),utr:p.utr||'',file:p.file_name||'Payment screenshot',referenceCode:p.payment_reference||'',status:p.status||'Pending',date:p.created_at||''}));save();renderPayments();}}catch(e){}
+  try{const supa=window.asfuSupabase;if(!supa)return toast('Payment system is not ready. Please refresh and login again');const {data:{session}}=await supa.auth.getSession();const token=session?.access_token;if(!token)return;const data=await window.api('/payments',{headers:{'Authorization':'Bearer '+token}});if(Array.isArray(data.payments)){db.payments=data.payments.map(p=>({id:p.id,userId:p.user_id,amount:Number(p.amount||0),utr:p.utr||'',file:p.file_name||'Payment screenshot',referenceCode:p.payment_reference||'',status:p.status||'Pending',date:p.created_at||''}));save();renderPayments();}}catch(e){}
 }
 function renderPayments(){
   let a=db.payments.filter(x=>x.userId===current.id);
@@ -1061,6 +1061,9 @@ loadServices();
     if(!r.ok || data.error) throw new Error(data.error || 'API request failed');
     return data;
   }
+
+  window.asfuApi=api;
+  window.api=api;
 
   async function syncServices(){
     try{
