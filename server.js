@@ -505,3 +505,236 @@ app.get('/api/health', function (req, res) {
 });
 
 app.get('/api/services', async function (req, res) {
+  try {
+    const list = await provider({
+      action: 'services'
+    });
+
+    const grouped = {};
+
+    for (const service of Array.isArray(list) ? list : []) {
+      const category = String(
+        service.category || 'Other'
+      );
+
+      const providerRate = Number(
+        service.rate || 0
+      );
+
+      if (!Number.isFinite(providerRate)) continue;
+
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+
+      grouped[category].push({
+        providerServiceId:String(service.service),
+
+        name:String(
+          service.name ||
+          ('Service ' + service.service)
+        ),
+
+        type:String(
+          service.type || 'Default'
+        ),
+
+        providerRate:providerRate,
+
+        ratePer1k:
+          providerRate *
+          FX *
+          MULTIPLIER,
+
+        ratePerUnit:
+          providerRate *
+          FX *
+          MULTIPLIER /
+          1000,
+
+        min:Number(service.min || 0),
+        max:Number(service.max || 0)
+      });
+    }
+
+    res.json({
+      services:grouped,
+      currency:'INR',
+      providerCurrency:'USD',
+      fx:FX,
+      multiplier:MULTIPLIER
+    });
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.post('/api/order', async function (req, res) {
+  try {
+    const body = req.body || {};
+
+    const service = body.service;
+    const url = body.url;
+    const quantity = body.quantity;
+    const comments = body.comments || '';
+    const interval = body.interval || '';
+
+    if (!service || !url || !quantity) {
+      return res.status(400).json({
+        error:'service, url and quantity are required'
+      });
+    }
+
+    const params = {
+      action:'add',
+      service:String(service),
+      url:String(url),
+      quantity:String(quantity)
+    };
+
+    if (comments) {
+      params.comments=String(comments);
+    }
+
+    if (interval) {
+      params.interval=String(interval);
+    }
+
+    const data=await provider(params);
+
+    res.json({
+      order:data.order
+    });
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.post('/api/status', async function (req, res) {
+  try {
+    const order=req.body && req.body.order;
+
+    if (!order) {
+      return res.status(400).json({
+        error:'order is required'
+      });
+    }
+
+    res.json(
+      await provider({
+        action:'status',
+        order:String(order)
+      })
+    );
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.post('/api/status/bulk', async function (req, res) {
+  try {
+    const input=req.body && req.body.orders;
+
+    const orders=Array.isArray(input)
+      ? input.filter(Boolean).slice(0,100)
+      : [];
+
+    if(!orders.length) {
+      return res.json({
+        orders:{}
+      });
+    }
+
+    const data=await provider({
+      action:'status',
+      orders:orders.join(',')
+    });
+
+    res.json({
+      orders:data
+    });
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.get('/api/balance', async function (req, res) {
+  try {
+    res.json(
+      await provider({
+        action:'balance'
+      })
+    );
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.post('/api/refill', async function (req, res) {
+  try {
+    const order=
+      req.body && req.body.order
+        ? String(req.body.order)
+        : '';
+
+    res.json(
+      await provider({
+        action:'refill',
+        order:order
+      })
+    );
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.post('/api/cancel', async function (req, res) {
+  try {
+    const order=
+      req.body && req.body.order
+        ? String(req.body.order)
+        : '';
+
+    res.json(
+      await provider({
+        action:'cancel',
+        order:order
+      })
+    );
+
+  } catch (error) {
+    res.status(502).json({
+      error:error.message
+    });
+  }
+});
+
+app.get('*', function (req, res) {
+  res.sendFile(
+    path.join(__dirname, 'index.html')
+  );
+});
+
+app.listen(PORT, function () {
+  console.log(
+    'ASFU SMMZZ backend running on port ' + PORT
+  );
+});
