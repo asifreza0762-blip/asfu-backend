@@ -585,6 +585,14 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
 #page-admin .adminKpis .stat{min-height:86px}
 @media(max-width:700px){#page-orders .ordersOverview{grid-template-columns:1fr 1fr}#page-orders .ordersMini:last-child{grid-column:1/-1}#page-admin .adminKpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+<style id="asfu-toast-center-fix">
+.toast{left:50%;right:auto;bottom:auto;top:50%;transform:translate(-50%,-50%) scale(.98);min-width:320px;width:min(430px,calc(100vw - 32px));max-width:430px;padding:18px 20px;border-radius:18px;box-shadow:0 25px 80px rgba(0,0,0,.55),0 0 0 1px rgba(92,143,214,.12);z-index:99999}
+.toast.show{display:flex;animation:asfuToastCenterIn .22s ease forwards}
+@keyframes asfuToastCenterIn{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.toastIcon{width:44px;height:44px;border-radius:14px;font-size:20px}
+.toastTitle{font-size:15px}.toastText{font-size:12px}.toastBar{height:3px}
+@media(max-width:600px){.toast{width:calc(100vw - 28px);min-width:0}}
+</style>
 </head>
 <body>
 <div id="landing">
@@ -702,9 +710,6 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
         <div class="payment-form">
           <label>UTR / Transaction ID</label>
           <input class="input" id="utr" placeholder="Enter UTR / transaction ID"/>
-
-          <label>Payment / Reference URL (optional)</label>
-          <input class="input" id="paymentUrl" placeholder="https://..." type="url"/>
 
           <label>Payment Screenshot</label>
           <input accept="image/*" class="file" id="shot" type="file"/>
@@ -940,41 +945,62 @@ function resetPaymentFlow(){
   const screen=document.getElementById('paymentScreenStep');
   if(start)start.classList.remove('hidden');
   if(screen)screen.classList.add('hidden');
-  const utrEl=document.getElementById('utr'),urlEl=document.getElementById('paymentUrl'),shotEl=document.getElementById('shot');
+  const utrEl=document.getElementById('utr'),shotEl=document.getElementById('shot');
   if(utrEl)utrEl.value='';
-  if(urlEl)urlEl.value='';
   if(shotEl)shotEl.value='';
 }
 async function submitPayment(){
   const amount=currentPaymentAmount;
-  const u=document.getElementById('utr').value.trim();
-  const f=document.getElementById('shot').files[0];
-  const url=(document.getElementById('paymentUrl')?.value||'').trim();
+  const u=(document.getElementById('utr')?.value||'').trim();
+  const f=document.getElementById('shot')?.files?.[0];
   if(!amount)return toast('Choose a payment amount first');
   if(!u||!f)return toast('UTR and payment screenshot are required');
-  if(url&&!/^https?:\/\//i.test(url))return toast('Enter a valid URL');
   if(f.size>8*1024*1024)return toast('Screenshot must be under 8MB');
   try{
-    const supa=window.asfuSupabase;if(!supa)return toast('Payment system is not ready. Please refresh and login again');const {data:{session}}=await supa.auth.getSession();
+    const supa=window.asfuSupabase;
+    if(!supa)return toast('Payment system is not ready. Please refresh and login again');
+    const {data:{session}}=await supa.auth.getSession();
     const token=session?.access_token;
-    if(!token) return toast('Please login again');
+    if(!token)return toast('Please login again');
     const reader=new FileReader();
     reader.onload=async()=>{
       try{
-        const data=await api('/payments',{method:'POST',headers:{'Authorization':'Bearer '+token},body:JSON.stringify({amount,utr:u,url,referenceCode:currentPaymentReference||makePaymentReference(),fileName:f.name,fileData:reader.result})});
+        const apiBase=(window.ASFU_API_BASE||'https://asfu-backend.onrender.com/api').replace(/\/$/,'');
+        const response=await fetch(apiBase+'/payments',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+          body:JSON.stringify({
+            amount,
+            utr:u,
+            referenceCode:currentPaymentReference||makePaymentReference(),
+            fileName:f.name,
+            fileData:reader.result
+          })
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok||data.error)throw new Error(data.error||'Could not submit payment');
         const p=data.payment;
-        db.payments.push({id:p.id,userId:p.userId,amount:Number(p.amount),utr:p.utr,file:p.fileName||f.name,url:p.url||'',referenceCode:p.paymentReference||currentPaymentReference,status:p.status||'Pending',date:p.createdAt||new Date().toLocaleString()});
-        save();
+        if(p){
+          db.payments.push({id:p.id,userId:p.userId,amount:Number(p.amount||amount),utr:p.utr||u,file:p.fileName||f.name,referenceCode:p.paymentReference||currentPaymentReference,status:p.status||'Pending',date:p.createdAt||new Date().toLocaleString()});
+          save();
+        }
         renderPayments();
-        document.getElementById('utr').value='';
-        document.getElementById('shot').value='';
-        if(document.getElementById('paymentUrl'))document.getElementById('paymentUrl').value='';
+        const utrEl=document.getElementById('utr'),shotEl=document.getElementById('shot');
+        if(utrEl)utrEl.value='';
+        if(shotEl)shotEl.value='';
         toast('Payment submitted for manual verification');
         currentPaymentReference='';
-      }catch(error){ toast(error.message||'Could not submit payment'); }
+      }catch(error){
+        console.error('Payment submit failed:',error);
+        toast(error.message||'Could not submit payment');
+      }
     };
+    reader.onerror=()=>toast('Could not read the payment screenshot');
     reader.readAsDataURL(f);
-  }catch(error){ toast(error.message||'Could not submit payment'); }
+  }catch(error){
+    console.error('Payment submit failed:',error);
+    toast(error.message||'Could not submit payment');
+  }
 }
 async function syncUserPayments(){
   if(!current||current.role==='admin')return;
