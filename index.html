@@ -663,6 +663,75 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
   .tableWrap{width:100%;overflow-x:hidden}
 }
 </style>
+
+<style id="asfu-mobile-orders-fix">
+@media (max-width:700px){
+  #page-orders .main,
+  #page-orders{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  #page-orders .ordersTableWrap{
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+    box-sizing:border-box;
+    padding:0;
+  }
+  #page-orders .ordersTable{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    table-layout:fixed;
+  }
+  #page-orders .ordersTable tbody,
+  #page-orders .ordersTable tr,
+  #page-orders .ordersTable td{
+    max-width:100% !important;
+    box-sizing:border-box;
+  }
+  #page-orders .ordersTable tr:has(.ordersEmpty){
+    min-height:240px;
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+  }
+  #page-orders .ordersTable td.ordersEmpty{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:210px;
+    display:flex !important;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center !important;
+    padding:34px 20px !important;
+    white-space:normal !important;
+    overflow:hidden;
+  }
+  #page-orders .ordersEmptyIcon{
+    width:58px;
+    height:58px;
+    display:grid;
+    place-items:center;
+    margin:0 auto 12px;
+    border-radius:18px;
+    background:linear-gradient(145deg,#102a49,#0a1a2f);
+    border:1px solid #29476e;
+    font-size:26px;
+  }
+  #page-orders .ordersEmpty b{
+    font-size:16px;
+    line-height:1.3;
+  }
+  #page-orders .ordersEmpty small{
+    max-width:280px;
+    line-height:1.5;
+    text-align:center;
+  }
+}
+</style>
 </head>
 <body>
 <div id="landing">
