@@ -1474,19 +1474,18 @@ loadServices();
     }
 
     if(e === ADMIN_EMAIL){
-      adminPassOk(p).then(async ok=>{
-        if(!ok) return toast('Invalid email or password');
-        try{
-          const data=await window.api('/admin/login',{method:'POST',body:JSON.stringify({email:e,password:p})});
-          if(!data.token) throw new Error('Admin login failed');
-          sessionStorage.setItem(KEY+'_admin_token',data.token);
-          current={id:0,name:'Admin',username:'admin',email:ADMIN_EMAIL,role:'admin',balance:0};
-          closeAuth();
-          saveSession();
-          enterApp('dashboard');
-          toast('Welcome back');
-        }catch(error){toast(error.message||'Admin login failed')}
-      });
+      try{
+        const apiBase=(window.ASFU_API_BASE||'https://asfu-backend.onrender.com/api').replace(/\/$/,'');
+        const response=await fetch(apiBase+'/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,password:p})});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok || !data.token) throw new Error(data.error||'Admin login failed');
+        sessionStorage.setItem(KEY+'_admin_token',data.token);
+        current={id:0,name:'Admin',username:'admin',email:ADMIN_EMAIL,role:'admin',balance:0};
+        closeAuth();
+        saveSession();
+        enterApp('dashboard');
+        toast('Welcome back');
+      }catch(error){toast(error.message||'Admin login failed')}
       return;
     }
 
