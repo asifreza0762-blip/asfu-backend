@@ -28,7 +28,9 @@ const MULTIPLIER = Number(process.env.PRICE_MULTIPLIER || 1.40);
 
 app.use(express.json({ limit: '12mb' }));
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+
+// FRONTEND IS IN ROOT DIRECTORY
+app.use(express.static(__dirname));
 
 function requireKey() {
   if (!API_KEY) {
@@ -826,7 +828,6 @@ app.get('*', function(req,res) {
   res.sendFile(
     path.join(
       __dirname,
-      'public',
       'index.html'
     )
   );
