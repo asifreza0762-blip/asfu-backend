@@ -1059,16 +1059,6 @@ loadServices();
     try{
       const data=await api('/services');
       liveServices=data.services||{};
-      window.__asfuFX=Number(data.fx||85);
-      const SELL_MULTIPLIER=1.40;
-      const serverMultiplier=Number(data.multiplier||1.40)||1.40;
-      Object.values(liveServices).flat().forEach(s=>{
-        const providerRate=Number(s.providerRate||0);
-        if(providerRate>0){
-          s.ratePer1k=(providerRate*window.__asfuFX*SELL_MULTIPLIER)/1000;
-          s.ratePerUnit=s.ratePer1k/1000;
-        }
-      });
       window.__asfuLiveServices=liveServices;
       providerOnline=true;
       renderLiveServices();
