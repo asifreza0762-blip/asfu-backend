@@ -1135,6 +1135,9 @@ loadServices();
     return data;
   }
 
+  // Expose the API bridge globally so the existing admin login handler can use it.
+  window.api = api;
+
   async function syncServices(){
     try{
       const data=await api('/services');
