@@ -585,14 +585,6 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
 #page-admin .adminKpis .stat{min-height:86px}
 @media(max-width:700px){#page-orders .ordersOverview{grid-template-columns:1fr 1fr}#page-orders .ordersMini:last-child{grid-column:1/-1}#page-admin .adminKpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
-<style id="asfu-toast-center-fix">
-.toast{left:50%;right:auto;bottom:auto;top:50%;transform:translate(-50%,-50%) scale(.98);min-width:320px;width:min(430px,calc(100vw - 32px));max-width:430px;padding:18px 20px;border-radius:18px;box-shadow:0 25px 80px rgba(0,0,0,.55),0 0 0 1px rgba(92,143,214,.12);z-index:99999}
-.toast.show{display:flex;animation:asfuToastCenterIn .22s ease forwards}
-@keyframes asfuToastCenterIn{from{opacity:0;transform:translate(-50%,-46%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-.toastIcon{width:44px;height:44px;border-radius:14px;font-size:20px}
-.toastTitle{font-size:15px}.toastText{font-size:12px}.toastBar{height:3px}
-@media(max-width:600px){.toast{width:calc(100vw - 28px);min-width:0}}
-</style>
 </head>
 <body>
 <div id="landing">
@@ -710,6 +702,7 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
         <div class="payment-form">
           <label>UTR / Transaction ID</label>
           <input class="input" id="utr" placeholder="Enter UTR / transaction ID"/>
+
 
           <label>Payment Screenshot</label>
           <input accept="image/*" class="file" id="shot" type="file"/>
@@ -951,8 +944,10 @@ function resetPaymentFlow(){
 }
 async function submitPayment(){
   const amount=currentPaymentAmount;
-  const u=(document.getElementById('utr')?.value||'').trim();
-  const f=document.getElementById('shot')?.files?.[0];
+  const utrEl=document.getElementById('utr');
+  const shotEl=document.getElementById('shot');
+  const u=utrEl?.value.trim()||'';
+  const f=shotEl?.files?.[0];
   if(!amount)return toast('Choose a payment amount first');
   if(!u||!f)return toast('UTR and payment screenshot are required');
   if(f.size>8*1024*1024)return toast('Screenshot must be under 8MB');
@@ -978,14 +973,12 @@ async function submitPayment(){
           })
         });
         const data=await response.json().catch(()=>({}));
-        if(!response.ok||data.error)throw new Error(data.error||'Could not submit payment');
+        if(!response.ok||data.error)throw new Error(data.error||('Payment request failed (HTTP '+response.status+')'));
         const p=data.payment;
-        if(p){
-          db.payments.push({id:p.id,userId:p.userId,amount:Number(p.amount||amount),utr:p.utr||u,file:p.fileName||f.name,referenceCode:p.paymentReference||currentPaymentReference,status:p.status||'Pending',date:p.createdAt||new Date().toLocaleString()});
-          save();
-        }
+        if(!p)throw new Error('Payment request was accepted but no payment record was returned');
+        db.payments.push({id:p.id,userId:p.userId,amount:Number(p.amount||amount),utr:p.utr||u,file:p.fileName||f.name,referenceCode:p.paymentReference||currentPaymentReference,status:p.status||'Pending',date:p.createdAt||new Date().toLocaleString()});
+        save();
         renderPayments();
-        const utrEl=document.getElementById('utr'),shotEl=document.getElementById('shot');
         if(utrEl)utrEl.value='';
         if(shotEl)shotEl.value='';
         toast('Payment submitted for manual verification');
@@ -1004,7 +997,7 @@ async function submitPayment(){
 }
 async function syncUserPayments(){
   if(!current||current.role==='admin')return;
-  try{const supa=window.asfuSupabase;if(!supa)return toast('Payment system is not ready. Please refresh and login again');const {data:{session}}=await supa.auth.getSession();const token=session?.access_token;if(!token)return;const data=await window.api('/payments',{headers:{'Authorization':'Bearer '+token}});if(Array.isArray(data.payments)){db.payments=data.payments.map(p=>({id:p.id,userId:p.user_id,amount:Number(p.amount||0),utr:p.utr||'',file:p.file_name||'Payment screenshot',referenceCode:p.payment_reference||'',status:p.status||'Pending',date:p.created_at||''}));save();renderPayments();}}catch(e){}
+  try{const supa=window.asfuSupabase;if(!supa)return toast('Payment system is not ready. Please refresh and login again');const {data:{session}}=await supa.auth.getSession();const token=session?.access_token;if(!token)return;const data=await api('/payments',{headers:{'Authorization':'Bearer '+token}});if(Array.isArray(data.payments)){db.payments=data.payments.map(p=>({id:p.id,userId:p.user_id,amount:Number(p.amount||0),utr:p.utr||'',file:p.file_name||'Payment screenshot',referenceCode:p.payment_reference||'',status:p.status||'Pending',date:p.created_at||''}));save();renderPayments();}}catch(e){}
 }
 function renderPayments(){
   let a=db.payments.filter(x=>x.userId===current.id);
@@ -1061,9 +1054,6 @@ loadServices();
     if(!r.ok || data.error) throw new Error(data.error || 'API request failed');
     return data;
   }
-
-  window.asfuApi=api;
-  window.api=api;
 
   async function syncServices(){
     try{
