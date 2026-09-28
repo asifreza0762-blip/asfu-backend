@@ -647,6 +647,22 @@ html.asfu-session-boot #app{display:block!important;visibility:hidden}
   #page-admin .adminKpis{grid-template-columns:1fr 1fr}
 }
 </style>
+<style id="asfu-mobile-fullwidth-fix">
+@media (max-width: 900px){
+  html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
+  #app,.app,.layout,.main,.page,.page.active{width:100%!important;max-width:100%!important;min-width:0!important}
+  .layout{grid-template-columns:1fr!important}
+  .main{margin:0!important;padding:20px!important}
+  .pageHead,.stats,.two,.grid{min-width:0;max-width:100%}
+  .stat,.card,.tableWrap{min-width:0;max-width:100%}
+}
+@media (max-width:600px){
+  .main{padding:14px!important}
+  .pageHead{width:100%;max-width:100%;flex-wrap:wrap}
+  .stats,.two,.grid{width:100%;grid-template-columns:1fr!important}
+  .tableWrap{width:100%;overflow-x:hidden}
+}
+</style>
 </head>
 <body>
 <div id="landing">
