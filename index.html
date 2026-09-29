@@ -1712,18 +1712,17 @@ loadServices();
     try{
       const data=await api('/services');
       liveServices=data.services||{};
-      window.__asfuProviderFx=Number(data.fx||85);
-      // Customer price = provider price + 40% margin, with provider USD rates converted to INR.
+      // Customer price = provider price + 40% (provider rates are already INR per 1K).
       Object.keys(liveServices).forEach(cat=>{
         (liveServices[cat]||[]).forEach(s=>{
           const providerRate=Number(s.providerRate!=null?s.providerRate:s.ratePer1k||0);
-          const fx=Number(window.__asfuProviderFx||85);
-          const customerRate=providerRate>0 ? providerRate*fx*1.40 : Number(s.ratePer1k||0);
+          const customerRate=providerRate>0 ? providerRate*1.40 : Number(s.ratePer1k||0);
           s.ratePer1k=customerRate;
           s.ratePerUnit=customerRate/1000;
         });
       });
       window.__asfuLiveServices=liveServices;
+      window.__asfuProviderFx=1;
       providerOnline=true;
       renderLiveServices();
       window.__asfuProviderOnline=true;
