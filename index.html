@@ -971,6 +971,101 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 #page-neworder .smmzz-charge{background:linear-gradient(135deg,#172d52,#10213d);border:1px solid rgba(88,139,255,.35);color:#fff;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
 @media(max-width:600px){#page-neworder .smmzz-info{padding:16px;margin-top:8px;border-radius:18px}#page-neworder .smmzz-info .smmzz-detail-grid{grid-template-columns:1fr 1fr;gap:8px}#page-neworder .smmzz-info .smmzz-detail-item{padding:8px 9px;font-size:13px}#page-neworder .smmzz-info .smmzz-detail-title{font-size:16px}}
 </style>
+
+<style id="asfu-neworder-final-dark-v4">
+/* New Order only — visual polish; no order/service logic changed */
+#page-neworder{max-width:920px;margin:0 auto;padding-bottom:40px}
+#page-neworder .pageHead{margin-bottom:14px}
+#page-neworder .pageHead h1{font-size:clamp(28px,4vw,38px);letter-spacing:-.03em}
+#page-neworder>.card{
+  position:relative;overflow:visible;padding:18px 18px 20px!important;
+  border:1px solid #1e3558!important;border-radius:20px!important;
+  background:linear-gradient(145deg,#0b192e 0%,#081426 58%,#071120 100%)!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.25)!important;
+}
+#page-neworder .smmzz-search{height:54px!important;margin:0 0 20px!important;border:1px solid #263f66!important;border-radius:16px!important;background:#071225!important;color:#eef4ff!important;padding:0 16px 0 48px!important;font-size:15px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 8px 22px rgba(0,0,0,.14)!important}
+#page-neworder .smmzz-search::placeholder{color:#7186a9!important}
+#page-neworder .smmzz-search:focus{border-color:#397dff!important;box-shadow:0 0 0 3px rgba(40,124,255,.12)!important}
+#page-neworder .smmzz-search-wrap:before{content:'⌕'!important;left:16px!important;top:7px!important;font-size:34px!important;color:#a9bbd8!important}
+#page-neworder .smmzz-label{font-size:13px!important;color:#aebfda!important;margin:12px 0 7px!important;font-weight:800!important}
+#page-neworder .smmzz-picker{margin-bottom:13px!important}
+#page-neworder .smmzz-current{
+  min-height:54px!important;border:1px solid #253d63!important;border-radius:15px!important;
+  background:linear-gradient(145deg,#101f38,#0b182c)!important;color:#edf4ff!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.14)!important;font-size:14px!important;padding:9px 42px 9px 13px!important;
+}
+#page-neworder .smmzz-current:after{right:15px!important;top:12px!important;color:#90a5c8!important;font-size:20px!important}
+#page-neworder .smmzz-current .smmzz-num{background:#172946!important;border:1px solid #2b4770!important;color:#dce9ff!important;border-radius:10px!important;padding:5px 8px!important;font-size:11px!important}
+#page-neworder .smmzz-menu{background:#0b192e!important;border:1px solid #284568!important;border-radius:15px!important;box-shadow:0 18px 40px rgba(0,0,0,.45)!important;padding:6px!important}
+#page-neworder .smmzz-option{color:#dce8fa!important;border-radius:10px!important;font-size:13px!important;padding:10px!important}
+#page-neworder .smmzz-option:hover{background:#122746!important}
+#page-neworder .smmzz-option .smmzz-num{background:#182a47!important;color:#e8f1ff!important}
+#page-neworder .smmzz-info{
+  background:linear-gradient(145deg,#0e1e35,#091426)!important;
+  border:1px solid #254267!important;border-radius:17px!important;padding:14px!important;margin:8px 0 15px!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.22)!important;color:#eaf2ff!important;line-height:1.45!important;
+}
+#page-neworder .smmzz-info:before{width:3px!important;background:linear-gradient(180deg,#713cff,#287cff)!important}
+#page-neworder .smmzz-info .smmzz-detail-title{font-size:15px!important;line-height:1.35!important;margin:0 0 10px!important;color:#f1f6ff!important;font-weight:850!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#page-neworder .smmzz-info .smmzz-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+#page-neworder .smmzz-info .smmzz-detail-item{
+  background:#0a172a!important;border:1px solid #1d3557!important;border-radius:11px!important;
+  padding:8px 9px!important;font-size:12px!important;font-weight:800!important;color:#e7effc!important;box-shadow:none!important
+}
+#page-neworder .smmzz-info .smmzz-detail-item span{font-size:9px!important;letter-spacing:.6px!important;color:#7890b4!important;margin-bottom:2px!important}
+#page-neworder .smmzz-info .smmzz-description{
+  margin-top:9px!important;padding:9px 10px!important;border:1px solid #1d3557!important;border-radius:11px!important;
+  background:#081527!important;color:#9eb2d1!important;font-size:11px!important;line-height:1.42!important;
+  display:-webkit-box!important;-webkit-box-orient:vertical!important;-webkit-line-clamp:3!important;overflow:hidden!important;max-height:65px!important
+}
+#page-neworder .smmzz-info .smmzz-description b{font-size:9px!important;color:#7f9bd0!important;letter-spacing:.7px!important;margin-bottom:3px!important}
+#page-neworder .smmzz-target-label{display:block!important;font-weight:800!important;font-size:13px!important;margin:12px 0 7px!important;color:#aebfda!important}
+#page-neworder .smmzz-original-target,#page-neworder .smmzz-original-qty{background:#071225!important;border:1px solid #253e64!important;color:#eef4ff!important;border-radius:13px!important;padding:13px 14px!important;box-shadow:none!important;margin:0 0 12px!important}
+#page-neworder .smmzz-original-target::placeholder,#page-neworder .smmzz-original-qty::placeholder{color:#607596!important}
+#page-neworder .smmzz-original-target:focus,#page-neworder .smmzz-original-qty:focus{border-color:#3b80ff!important;box-shadow:0 0 0 3px rgba(40,124,255,.11)!important}
+#page-neworder .smmzz-original-qty{margin-bottom:4px!important}
+#page-neworder .smmzz-native-label-hidden{display:none!important}
+#page-neworder .smmzz-original-qty + #smmzzMinMax{font-size:11px!important;color:#7188aa!important;font-weight:700!important;margin:0 0 12px!important}
+#page-neworder .smmzz-charge{
+  display:flex!important;align-items:center;justify-content:space-between;min-height:54px!important;
+  padding:13px 15px!important;margin:4px 0 10px!important;border-radius:14px!important;
+  background:linear-gradient(135deg,#152e55,#10223f)!important;border:1px solid #31578c!important;
+  color:#f5f8ff!important;font-size:15px!important;font-weight:850!important;box-shadow:0 10px 25px rgba(0,0,0,.18)!important
+}
+#page-neworder #orderTotalBox{display:none!important}
+#page-neworder .notice:not(#orderTotalBox){margin:0 0 12px!important;padding:10px 12px!important;border-radius:12px!important;background:#0b1c32!important;border:1px solid #1e3a60!important;color:#91a7c8!important;font-size:10px!important;line-height:1.45!important}
+#page-neworder>.card>.btn{
+  width:100%!important;min-height:52px!important;border-radius:14px!important;font-size:15px!important;font-weight:850!important;
+  background:linear-gradient(100deg,#713cff,#287cff)!important;box-shadow:0 12px 28px rgba(40,84,255,.22)!important
+}
+#page-neworder>.card>.btn:disabled{opacity:.65;cursor:wait}
+@media(max-width:600px){
+  #page-neworder{padding-bottom:105px!important}
+  #page-neworder>.card{padding:15px 13px 16px!important;border-radius:18px!important}
+  #page-neworder .smmzz-search{height:52px!important;margin-bottom:17px!important}
+  #page-neworder .smmzz-current{min-height:52px!important}
+  #page-neworder .smmzz-info{padding:12px!important;border-radius:15px!important;margin-bottom:13px!important}
+  #page-neworder .smmzz-info .smmzz-detail-title{font-size:14px!important}
+  #page-neworder .smmzz-info .smmzz-detail-item{font-size:11px!important;padding:7px 8px!important}
+  #page-neworder .smmzz-info .smmzz-description{font-size:10.5px!important;max-height:58px!important;-webkit-line-clamp:2!important}
+  #page-neworder>.card>.btn{position:sticky!important;bottom:78px!important;z-index:40!important;margin-top:2px!important;box-shadow:0 8px 28px rgba(0,0,0,.55),0 0 0 5px rgba(8,20,38,.92)!important}
+}
+</style>
+<script id="asfu-neworder-final-js">
+(function(){
+  function polish(){
+    var p=document.getElementById('page-neworder'); if(!p)return;
+    var b=p.querySelector('.card>.btn'); if(b && b.textContent.trim()==='Submit Order') b.textContent='Place Order';
+    var mm=document.getElementById('smmzzMinMax'); if(mm){var q=document.getElementById('qty');if(q&&q.parentNode&&mm.parentNode!==q.parentNode)q.parentNode.insertBefore(mm,q.nextSibling);}
+  }
+  document.addEventListener('DOMContentLoaded',function(){polish();setTimeout(polish,300);setTimeout(polish,900);});
+  setInterval(function(){if(document.getElementById('page-neworder')?.classList.contains('active'))polish();},1200);
+})();
+</script>
+
+<style id="asfu-profile-password-pro-v1">
+.asfuProfileActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}.asfuProfileActions .btn{margin-top:0}.asfuPasswordBtn{background:linear-gradient(145deg,#122441,#0c1b32)!important;border:1px solid #2b4770!important;color:#dce9ff!important}.asfuPasswordModal{display:none;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}.asfuPasswordModal.open{display:flex}.asfuPasswordOverlay{position:absolute;inset:0;background:rgba(2,7,18,.76);backdrop-filter:blur(6px)}.asfuPasswordBox{position:relative;width:min(440px,100%);padding:24px;border:1px solid #29466f;border-radius:22px;background:linear-gradient(145deg,#0d1d35,#071224);box-shadow:0 24px 70px rgba(0,0,0,.55);color:#eef4ff}.asfuPasswordBox h2{margin:0 0 7px;font-size:23px}.asfuPasswordHint{margin:0 0 18px;color:#8fa6ca;font-size:12px;line-height:1.5}.asfuPasswordBox label{display:block;margin:12px 0 7px;color:#aebfda;font-size:13px;font-weight:800}.asfuPasswordBox .input{width:100%;box-sizing:border-box;background:#071225;border:1px solid #253e64;color:#eef4ff}.asfuPasswordBox .btn{width:100%;margin-top:16px}.asfuPasswordIcon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:linear-gradient(135deg,#713cff,#287cff);box-shadow:0 10px 25px rgba(55,90,255,.22)}.asfuPasswordClose{position:absolute;right:13px;top:10px;border:0;background:transparent;color:#8fa6ca;font-size:28px;cursor:pointer;line-height:1}.asfuPasswordClose:hover{color:#fff}@media(max-width:600px){.asfuProfileActions{flex-direction:column}.asfuProfileActions .btn{width:100%}.asfuPasswordBox{padding:21px;border-radius:19px}}
+</style>
 </head>
 <body>
 <div id="landing">
@@ -1160,7 +1255,8 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 </div>
 </section>
 <section class="page" id="page-tickets"><div class="pageHead"><div><h1>Support Center</h1><p class="muted">Create a ticket and our support team will review your request.</p></div></div><div class="asfuSupportContact"><div><strong>Need help?</strong><span>For urgent assistance, contact ASFU Support.</span></div><div class="asfuSupportContactRight"><a href="https://wa.me/919229792752" target="_blank">Chat on WhatsApp</a></div></div><div class="two"><div class="card"><h3>Open Support Ticket</h3><div class="notice ticketHelp">Add your Order ID when your issue is order-related. For payment issues, keep your UTR or payment details ready.</div><div class="ticketForm"><label>Order ID <span class="muted">(optional)</span></label><input class="input" id="ticketOrderId" placeholder="e.g. 1001" inputmode="numeric"/><label>Issue Type</label><div class="ticketIssuePicker" id="ticketIssuePicker"><select class="select ticketIssueNative" id="ticketIssueType"><option value="Order Issue">Order &amp; Delivery</option><option value="Payment Issue">Payment Issue</option><option value="Add Funds">Add Funds &amp; Balance</option><option value="Refund Request">Refund Request</option><option value="Service Issue">Service &amp; Quality</option><option value="Order Not Received">Order Not Received / Incomplete</option><option value="Wrong Service">Wrong / Incorrect Service</option><option value="Drop / Refill">Drop / Refill Issue</option><option value="Account / Login">Account &amp; Login</option><option value="API Issue">API &amp; Integration</option><option value="Website / Technical">Website &amp; Technical</option><option value="Other">Other</option></select><button type="button" class="ticketIssueTrigger" id="ticketIssueTrigger" aria-haspopup="listbox" aria-expanded="false"><span id="ticketIssueLabel">Order &amp; Delivery</span><span class="issueArrow">⌄</span></button><div class="ticketIssueMenu" id="ticketIssueMenu" role="listbox"></div></div><label>Subject</label><input class="input" id="ticketSubject" placeholder="What do you need help with?"/><label>Describe the Issue</label><textarea class="textarea" id="ticketMsg" placeholder="Explain what happened and include any useful details..." rows="6"></textarea><label>Screenshot <span class="muted">(optional)</span></label><input accept="image/*" class="file" id="ticketScreenshot" type="file"/><div class="ticketAttachHint">PNG, JPG or WEBP · max 3 MB</div><button class="btn" id="createTicketBtn" onclick="openTicket()" style="width:100%">Create Support Ticket</button></div></div><div class="card"><div class="myTicketsHeader"><h3>My Tickets</h3><span class="ticketCountBadge" id="myTicketCount">0</span></div><div id="ticketsList"><div class="myTicketEmpty">No support tickets yet.<br/>Your submitted tickets will appear here.</div></div></div></div></section>
-<section class="page" id="page-profile"><div class="pageHead"><h1>Profile</h1></div><div class="card"><label>Name</label><input class="input" id="profileName"/><label>Email</label><input class="input" disabled="" id="profileEmail"/><button class="btn" onclick="saveProfile()">Save Profile</button></div></section>
+<section class="page" id="page-profile"><div class="pageHead"><h1>Profile</h1></div><div class="card asfuProfileCard"><label>Name</label><input class="input" id="profileName"/><label>Email</label><input class="input" disabled="" id="profileEmail"/><div class="asfuProfileActions"><button class="btn" onclick="saveProfile()">Save Profile</button><button class="btn secondary asfuPasswordBtn" type="button" onclick="openChangePassword()">Change Password</button></div></div></section>
+<div class="asfuPasswordModal" id="asfuPasswordModal" aria-hidden="true"><div class="asfuPasswordOverlay" onclick="closeChangePassword()"></div><div class="asfuPasswordBox" role="dialog" aria-modal="true" aria-labelledby="asfuPasswordTitle"><button class="asfuPasswordClose" type="button" aria-label="Close" onclick="closeChangePassword()">×</button><div class="asfuPasswordIcon">🔒</div><h2 id="asfuPasswordTitle">Change Password</h2><p class="asfuPasswordHint">Set a new password for your Asfu account.</p><label>New Password</label><input class="input" id="asfuNewPassword" type="password" minlength="6" placeholder="Enter new password" autocomplete="new-password"/><label>Confirm Password</label><input class="input" id="asfuConfirmPassword" type="password" minlength="6" placeholder="Confirm new password" autocomplete="new-password"/><button class="btn" id="asfuPasswordSaveBtn" type="button" onclick="changePasswordFromProfile()">Update Password</button></div></div>
 <section class="page" id="page-admin"><div class="pageHead"><div><h1>Admin Panel</h1><p class="muted">Manual control centre</p></div></div><div class="stats adminKpis"><div class="card stat"><b id="adminUsers">0</b><br/><span class="muted">Users</span></div><div class="card stat"><b id="adminOrders">0</b><br/><span class="muted">Orders</span></div><div class="card stat"><b id="adminPayments">0</b><br/><span class="muted">Pending Payments</span></div><div class="card stat"><b id="adminTickets">0</b><br/><span class="muted">Tickets</span></div><div class="card stat"><b id="adminSales">₹0.00</b><br/><span class="muted">Total Sales</span></div><div class="card stat"><b id="adminProfit">₹0.00</b><br/><span class="muted">Estimated Profit</span></div><div class="card stat"><b id="adminCompleted">0</b><br/><span class="muted">Completed Orders</span></div><div class="card stat"><b id="adminWalletAdded">₹0.00</b><br/><span class="muted">Approved Funds</span></div></div><div class="card adminSection" id="adminPaymentVerification"><div class="adminApprovalTitle"><span class="adminApprovalDot"></span><h2 style="margin:0">Payment Verification</h2></div><div id="adminPaymentsList">No pending payments.</div></div><div class="card adminSection"><h2>Support Tickets</h2><div id="adminTicketsList">No tickets yet.</div></div><div class="card adminSection"><h2>Order Management</h2><div class="tableWrap"><table class="table adminOrdersTable"><thead><tr><th>ID</th><th>User</th><th>Service</th><th>Target URL</th><th>Qty</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="adminOrdersBody"></tbody></table></div></div><div class="card adminSection"><h2>Service Management</h2><p class="muted">Active service catalogue and pricing.</p><div id="serviceAdmin"></div></div></section>
 </main></div></div>
 <nav class="asfuMobileNav" aria-label="Mobile navigation">
@@ -1504,6 +1600,35 @@ function renderPayments(){
 async function openTicket(){let orderId=ticketOrderId.value.trim(),issueType=ticketIssueType.value,subject=ticketSubject.value.trim(),m=ticketMsg.value.trim(),file=document.getElementById('ticketScreenshot')?.files?.[0],btn=document.getElementById('createTicketBtn');if(!subject||!m)return toast('Please enter subject and issue details');if(file&&file.size>3*1024*1024)return toast('Screenshot must be 3 MB or smaller');let fileData='';if(file){fileData=await new Promise((resolve,reject)=>{let r=new FileReader();r.onload=()=>resolve(String(r.result||''));r.onerror=reject;r.readAsDataURL(file)})}if(btn){btn.disabled=true;btn.textContent='Creating Ticket...'}try{db.tickets.push({id:db.next.ticket++,userId:current.id,orderId:orderId||'',issueType,subject,msg:m,status:'Open',date:new Date().toLocaleString(),file:file?.name||'',fileData});save();ticketOrderId.value='';ticketIssueType.value='Order Issue';ticketIssueType.dispatchEvent(new Event('change'));ticketSubject.value='';ticketMsg.value='';if(document.getElementById('ticketScreenshot'))document.getElementById('ticketScreenshot').value='';renderTickets();toast('Support ticket created successfully')}finally{if(btn){btn.disabled=false;btn.textContent='Create Support Ticket'}}}
 function renderTickets(){let a=db.tickets.filter(x=>x.userId===current.id),count=document.getElementById('myTicketCount');if(count)count.textContent=a.length;ticketsList.innerHTML=a.length?a.slice().reverse().map(x=>`<div class="myTicketCard"><div class="myTicketTop"><div><div class="myTicketTitle">#${x.id} ${esc(x.subject||'Support Ticket')}</div><div class="myTicketMeta">${esc(x.issueType||'General Issue')}${x.orderId?` · Order #${esc(x.orderId)}`:''} · ${esc(x.date||'')}</div></div><span class="pill ${x.status==='Resolved'?'green':x.status==='In Progress'?'yellow':''}">${esc(x.status||'Open')}</span></div><div class="myTicketMsg">${esc(x.msg||'')}</div>${x.fileData?`<a class="myTicketShot" href="${x.fileData}" target="_blank" rel="noopener">📎 View screenshot${x.file?` · ${esc(x.file)}`:''}</a>`:''}</div>`).join(''):'<div class="myTicketEmpty">No support tickets yet.<br/>Your submitted tickets will appear here.</div>'}
 function saveProfile(){let u=db.users.find(x=>x.id===current.id);u.name=profileName.value.trim()||u.name;current=u;save();document.getElementById('welcomeUser').textContent=current.name;toast('Profile saved')}
+function openChangePassword(){
+  const m=document.getElementById('asfuPasswordModal'); if(!m)return;
+  document.getElementById('asfuNewPassword').value=''; document.getElementById('asfuConfirmPassword').value='';
+  m.classList.add('open'); m.setAttribute('aria-hidden','false');
+  setTimeout(()=>document.getElementById('asfuNewPassword')?.focus(),60);
+}
+function closeChangePassword(){
+  const m=document.getElementById('asfuPasswordModal'); if(!m)return;
+  m.classList.remove('open'); m.setAttribute('aria-hidden','true');
+}
+async function changePasswordFromProfile(){
+  const p=document.getElementById('asfuNewPassword')?.value||'', cp=document.getElementById('asfuConfirmPassword')?.value||'', btn=document.getElementById('asfuPasswordSaveBtn');
+  if(!p||!cp)return toast('Please fill both password fields');
+  if(p.length<6)return toast('Password must be at least 6 characters');
+  if(p!==cp)return toast('Passwords do not match');
+  if(!window.asfuSupabase)return toast('Account service is not ready. Please try again.');
+  if(btn){btn.disabled=true;btn.textContent='Updating...';}
+  try{
+    const {error}=await window.asfuSupabase.auth.updateUser({password:p});
+    if(error)throw error;
+    closeChangePassword(); toast('Password updated successfully','success');
+  }catch(error){
+    toast(error?.message||'Could not update password');
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Update Password';}
+  }
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChangePassword()});
+
 function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm)nm.textContent='Welcome Back, '+(current.name||'Asif Reza');var av=document.getElementById('asfuDashAvatar');if(av){var parts=String(current.name||'User').trim().split(/\s+/);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
 function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminTickets.textContent=db.tickets.length;
   const adminSalesEl=document.getElementById('adminSales'),adminProfitEl=document.getElementById('adminProfit'),adminCompletedEl=document.getElementById('adminCompleted'),adminWalletEl=document.getElementById('adminWalletAdded');
@@ -1962,7 +2087,8 @@ loadServices();
     const type=pick(s,['type']);
     const speed=pick(s,['speed','speedText','averageTime','average_time','avgTime']);
     const drop=pick(s,['drop','dropRate']); const quality=pick(s,['quality']); const refill=pick(s,['refill','refillText']); const start=pick(s,['startTime','start_time']);
-    const min=pick(s,['min','minimum','minQuantity']); const max=pick(s,['max','maximum','maxQuantity']);
+    const min=pick(s,['min','minimum','minQuantity','min_order','minOrder','min_order_quantity','minOrderQuantity','min_qty','minQty','minimum_order']); const max=pick(s,['max','maximum','maxQuantity','max_order','maxOrder','max_order_quantity','maxOrderQuantity','max_qty','maxQty','maximum_order']);
+    const textForLimits=String(desc||s.name||''); const minMatch=textForLimits.match(/(?:min(?:imum)?|minimum\s+order)(?:\s*order)?\s*[:=\-]?\s*(\d[\d,]*)/i); const maxMatch=textForLimits.match(/(?:max(?:imum)?|maximum\s+order)(?:\s*order)?\s*[:=\-]?\s*(\d[\d,]*)/i); const minVal=min!==''?min:(minMatch?minMatch[1].replace(/,/g,''):''); const maxVal=max!==''?max:(maxMatch?maxMatch[1].replace(/,/g,''):'');
     const rate=Number(s.ratePer1k||0), unit=Number(s.ratePerUnit||0);
     let html=`<div class="smmzz-detail-title">${esc(s.name||'Service Details')}</div>`;
     html+='<div class="smmzz-detail-grid">';
@@ -1970,8 +2096,8 @@ loadServices();
     html+=`<div class="smmzz-detail-item"><span>Type</span>${esc(type||'Default')}</div>`;
     html+=`<div class="smmzz-detail-item"><span>Price / 1K</span>₹${rate.toFixed(2)}</div>`;
     html+=`<div class="smmzz-detail-item"><span>Price / Unit</span>₹${unit.toFixed(4)}</div>`;
-    html+=`<div class="smmzz-detail-item"><span>Minimum</span>${esc(min||'—')}</div>`;
-    html+=`<div class="smmzz-detail-item"><span>Maximum</span>${esc(max||'—')}</div>`;
+    html+=`<div class="smmzz-detail-item"><span>Minimum</span>${esc(minVal||'—')}</div>`;
+    html+=`<div class="smmzz-detail-item"><span>Maximum</span>${esc(maxVal||'—')}</div>`;
     if(speed) html+=`<div class="smmzz-detail-item"><span>Average Time</span>${esc(speed)}</div>`;
     if(refill) html+=`<div class="smmzz-detail-item"><span>Refill</span>${esc(refill)}</div>`;
     if(drop) html+=`<div class="smmzz-detail-item"><span>Drop</span>${esc(drop)}</div>`;
@@ -1980,8 +2106,8 @@ loadServices();
     html+='</div>';
     if(desc) html+=`<div class="smmzz-description"><b>Service Description</b>${esc(desc)}</div>`;
     info.innerHTML=html;
-    if(qty){if(min!=='')qty.min=min;if(max!=='')qty.max=max;}
-    let minmax=''; if(min!==''||max!=='')minmax=`Min: ${min||'—'} - Max: ${max||'—'}`;
+    if(qty){if(minVal!=='')qty.min=String(minVal);if(maxVal!=='')qty.max=String(maxVal);}
+    let minmax=''; if(minVal!==''||maxVal!=='')minmax=`Min: ${minVal||'—'} - Max: ${maxVal||'—'}`;
     let mm=document.getElementById('smmzzMinMax'); if(!mm){mm=document.createElement('div');mm.id='smmzzMinMax';mm.style='font-size:14px;color:#888;font-weight:600;margin:-6px 0 12px;'; qty&&qty.parentNode.insertBefore(mm,qty.nextSibling)} mm.textContent=minmax;
   }
   function refreshAll(){categoryOptions();serviceOptions(document.getElementById('smmzzServiceSearch').value);updateInfo();}
