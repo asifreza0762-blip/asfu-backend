@@ -201,9 +201,11 @@ app.post('/api/admin/login', async function (req, res) {
       email !== ADMIN_EMAIL ||
       hash !== ADMIN_PASS_HASH
     ) {
-      return res.status(401).json({
-        error: 'Invalid email or password'
-      });
+      return res
+        .status(401)
+        .json({
+          error: 'Invalid email or password'
+        });
     }
 
     const token =
@@ -897,7 +899,11 @@ app.post('/api/order', async function (req, res) {
       service:
         String(service),
 
-      url:
+      /* FIX:
+         SMMZZ requires "link",
+         not "url"
+      */
+      link:
         String(url),
 
       quantity:
