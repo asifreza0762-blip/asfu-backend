@@ -955,6 +955,22 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 #page-tickets .ticketIssueDot{width:8px;height:8px;border-radius:50%;background:#628cff;box-shadow:0 0 10px rgba(98,140,255,.45);flex:none}
 @media(max-width:600px){#app .appHeaderBrand{min-width:105px}#app .appHeaderBrand b{font-size:15px}#page-tickets .ticketIssueMenu{max-height:255px}.page#page-tickets{overflow:visible}}
 </style>
+
+<style id="asfu-neworder-professional-v3">
+#page-neworder .smmzz-native-label-hidden{display:none!important}
+#page-neworder .smmzz-info{position:relative;background:linear-gradient(145deg,#f8fafc,#eef3f9);border:1px solid rgba(78,128,207,.20);border-radius:20px;padding:18px;margin:10px 0 18px;box-shadow:0 10px 26px rgba(0,0,0,.12);color:#18202b;line-height:1.5;overflow:hidden}
+#page-neworder .smmzz-info:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#5d42ff,#218cff)}
+#page-neworder .smmzz-info .smmzz-detail-title{font-size:17px;line-height:1.35;font-weight:850;margin:0 0 13px;color:#172554}
+#page-neworder .smmzz-info .smmzz-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#page-neworder .smmzz-info .smmzz-detail-item{background:#fff;border:1px solid rgba(31,62,111,.10);border-radius:12px;padding:9px 10px;font-size:14px;font-weight:800;min-width:0;box-shadow:0 3px 9px rgba(25,50,90,.06)}
+#page-neworder .smmzz-info .smmzz-detail-item span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.55px;color:#718096;font-weight:800;margin-bottom:3px}
+#page-neworder .smmzz-info .smmzz-description{margin-top:12px;padding:11px 12px;border:1px solid rgba(31,62,111,.10);border-radius:12px;background:#fff;font-size:13px;line-height:1.55;color:#344054}
+#page-neworder .smmzz-info .smmzz-description b{display:block;margin-bottom:3px;color:#172554;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+#page-neworder .smmzz-info .row{margin:7px 0;font-size:13px;font-weight:700;color:#344054}
+#page-neworder .smmzz-target-label{display:block;font-weight:800;font-size:16px;margin:14px 0 8px;color:inherit}
+#page-neworder .smmzz-charge{background:linear-gradient(135deg,#172d52,#10213d);border:1px solid rgba(88,139,255,.35);color:#fff;border-radius:16px;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+@media(max-width:600px){#page-neworder .smmzz-info{padding:16px;margin-top:8px;border-radius:18px}#page-neworder .smmzz-info .smmzz-detail-grid{grid-template-columns:1fr 1fr;gap:8px}#page-neworder .smmzz-info .smmzz-detail-item{padding:8px 9px;font-size:13px}#page-neworder .smmzz-info .smmzz-detail-title{font-size:16px}}
+</style>
 </head>
 <body>
 <div id="landing">
@@ -1888,8 +1904,10 @@ loadServices();
   const cat=document.getElementById('category'), svc=document.getElementById('service'), target=document.getElementById('target'), qty=document.getElementById('qty');
   if(!page||!cat||!svc)return;
   const card=page.querySelector('.card'); if(!card)return;
+  const oldCatLabel=cat&&cat.previousElementSibling;
+  const oldSvcLabel=svc&&svc.previousElementSibling;
   const oldTargetLabel=target&&target.previousElementSibling;
-  if(oldTargetLabel && oldTargetLabel.tagName==='LABEL') oldTargetLabel.classList.add('smmzz-original-label');
+  [oldCatLabel,oldSvcLabel,oldTargetLabel].forEach(function(el){if(el&&el.tagName==='LABEL')el.classList.add('smmzz-native-label-hidden')});
   cat.classList.add('smmzz-hidden-native'); svc.classList.add('smmzz-hidden-native');
   if(target) target.classList.add('smmzz-original-target');
   if(qty) qty.classList.add('smmzz-original-qty');
@@ -1911,6 +1929,8 @@ loadServices();
   const info=document.createElement('div'); info.className='smmzz-info'; info.id='smmzzDescription';
   info.innerHTML='<div class="row">Service details will appear here.</div>';
   card.insertBefore(info,target||null);
+  const targetLabel=document.createElement('div'); targetLabel.className='smmzz-target-label'; targetLabel.textContent='Target URL / Username';
+  card.insertBefore(targetLabel,target||null);
 
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function iconFor(name){const n=String(name||'').toLowerCase(); for(const k of Object.keys(logoMap)){if(n.includes(k))return logoMap[k];} return ''}
@@ -1928,7 +1948,7 @@ loadServices();
     const arr=serviceArr(); const q=String(filter||'').toLowerCase().trim();
     const menu=svcPicker.querySelector('.smmzz-menu');
     const list=arr.map((s,i)=>({s,i})).filter(x=>{const hay=(String(x.s.name||'')+' '+String(x.s.providerServiceId||x.s.service||'')).toLowerCase();return !q||hay.includes(q)});
-    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||'';return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid||String(x.i+1))}</span><span>${esc(x.s.name||('Service '+(x.i+1)))}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
+    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
     menu.querySelectorAll('.smmzz-option').forEach(b=>b.onclick=function(){svc.value=this.dataset.index;svcPicker.classList.remove('open');updateInfo();if(typeof window.updateOrderTotal==='function')window.updateOrderTotal();});
     const idx=Number(svc.value)||0, s=arr[idx];
     if(s){const sid=s.providerServiceId||s.service||String(idx+1);setCurrent(svcPicker,`<span class="smmzz-num">${esc(sid)}</span><span>${esc(s.name||'Select service')}</span>`);}
@@ -1954,11 +1974,11 @@ loadServices();
     html+=`<div class="smmzz-detail-item"><span>Maximum</span>${esc(max||'—')}</div>`;
     if(speed) html+=`<div class="smmzz-detail-item"><span>Average Time</span>${esc(speed)}</div>`;
     if(refill) html+=`<div class="smmzz-detail-item"><span>Refill</span>${esc(refill)}</div>`;
+    if(drop) html+=`<div class="smmzz-detail-item"><span>Drop</span>${esc(drop)}</div>`;
+    if(quality) html+=`<div class="smmzz-detail-item"><span>Quality</span>${esc(quality)}</div>`;
+    if(start) html+=`<div class="smmzz-detail-item"><span>Start Time</span>${esc(start)}</div>`;
     html+='</div>';
-    if(desc) html+=`<div class="smmzz-description"><b>Description</b><br>${esc(desc)}</div>`;
-    if(drop) html+=`<div class="row">Drop — ${esc(drop)}</div>`;
-    if(quality) html+=`<div class="row">Quality — ${esc(quality)}</div>`;
-    if(start) html+=`<div class="row">Start Time — ${esc(start)}</div>`;
+    if(desc) html+=`<div class="smmzz-description"><b>Service Description</b>${esc(desc)}</div>`;
     info.innerHTML=html;
     if(qty){if(min!=='')qty.min=min;if(max!=='')qty.max=max;}
     let minmax=''; if(min!==''||max!=='')minmax=`Min: ${min||'—'} - Max: ${max||'—'}`;
