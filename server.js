@@ -201,11 +201,9 @@ app.post('/api/admin/login', async function (req, res) {
       email !== ADMIN_EMAIL ||
       hash !== ADMIN_PASS_HASH
     ) {
-      return res
-        .status(401)
-        .json({
-          error: 'Invalid email or password'
-        });
+      return res.status(401).json({
+        error: 'Invalid email or password'
+      });
     }
 
     const token =
@@ -530,31 +528,26 @@ app.get('/api/admin/payments', async function (req, res) {
 ========================= */
 
 app.patch('/api/admin/payments/:id', async function (req, res) {
-    try {
-
+  try {
     if (!adminUser(req)) {
       return res.status(401).json({
         error: 'Admin session expired'
       });
     }
 
-    /*
-     * Normalize payment status.
-     *
-     * approved / APPROVED / Approved
-     * rejected / REJECTED / Rejected
-     * sab accept honge.
-     */
-
-    const rawStatus =
-      String(req.body?.status || '')
-        .trim()
-        .toLowerCase();
+    const rawStatus = String(
+      req.body?.status ??
+      req.body?.action ??
+      req.body?.paymentStatus ??
+      ''
+    ).trim().toLowerCase();
 
     const status =
-      rawStatus === 'approved'
+      rawStatus === 'approved' ||
+      rawStatus === 'approve'
         ? 'Approved'
-        : rawStatus === 'rejected'
+        : rawStatus === 'rejected' ||
+          rawStatus === 'reject'
           ? 'Rejected'
           : '';
 
@@ -566,10 +559,6 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
 
     const id =
       encodeURIComponent(req.params.id);
-
-    /*
-     * Get payment.
-     */
 
     const rows =
       await supabaseRequest(
@@ -597,14 +586,6 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
         error: 'Payment already reviewed'
       });
     }
-
-    /*
-     * ATOMIC CLAIM
-     *
-     * Sirf Pending payment hi change hogi.
-     * Isse double click / duplicate request
-     * se double credit nahi hoga.
-     */
 
     const claimedRows =
       await supabaseRequest(
@@ -639,17 +620,8 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
       });
     }
 
-    /*
-     * APPROVED
-     *
-     * Customer ke balance mein
-     * payment amount add hoga.
-     */
-
     if (status === 'Approved') {
-
       try {
-
         const profiles =
           await supabaseRequest(
             '/rest/v1/profiles?select=id,balance&id=eq.' +
@@ -714,14 +686,7 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
         );
 
       } catch (creditError) {
-
-        /*
-         * Balance update fail hua to
-         * payment ko Pending mein rollback karo.
-         */
-
         try {
-
           await supabaseRequest(
             '/rest/v1/payments?id=' +
               id +
@@ -741,36 +706,25 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
               })
             }
           );
-
         } catch (rollbackError) {}
 
         throw creditError;
       }
     }
 
-    /*
-     * REJECTED
-     *
-     * Customer balance mein
-     * koi paisa add nahi hoga.
-     */
-
-    res.json({
+    return res.json({
       ok: true,
       status,
       paymentId: payment.id
     });
 
   } catch (error) {
-
-    res.status(500).json({
+    return res.status(500).json({
       error:
         error.message ||
         'Could not update payment'
     });
-
   }
-
 });
 
 
@@ -779,7 +733,6 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
 ========================= */
 
 app.get('/api/health', function (req, res) {
-
   res.json({
     ok: true,
     configured:
@@ -787,7 +740,6 @@ app.get('/api/health', function (req, res) {
     provider:
       'SMMZZ'
   });
-
 });
 
 
@@ -796,9 +748,7 @@ app.get('/api/health', function (req, res) {
 ========================= */
 
 app.get('/api/services', async function (req, res) {
-
   try {
-
     const list =
       await provider({
         action: 'services'
@@ -812,7 +762,6 @@ app.get('/api/services', async function (req, res) {
         ? list
         : [])
     ) {
-
       const category =
         String(
           service.category ||
@@ -837,7 +786,6 @@ app.get('/api/services', async function (req, res) {
       }
 
       grouped[category].push({
-
         providerServiceId:
           String(
             service.service
@@ -880,13 +828,10 @@ app.get('/api/services', async function (req, res) {
           Number(
             service.max || 0
           )
-
       });
-
     }
 
     res.json({
-
       services:
         grouped,
 
@@ -901,29 +846,21 @@ app.get('/api/services', async function (req, res) {
 
       multiplier:
         MULTIPLIER
-
     });
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
-
-
 /* =========================
    ORDER
 ========================= */
 
 app.post('/api/order', async function (req, res) {
-
   try {
-
     const body =
       req.body || {};
 
@@ -954,7 +891,6 @@ app.post('/api/order', async function (req, res) {
     }
 
     const params = {
-
       action:
         'add',
 
@@ -966,7 +902,6 @@ app.post('/api/order', async function (req, res) {
 
       quantity:
         String(quantity)
-
     };
 
     if (comments) {
@@ -988,14 +923,11 @@ app.post('/api/order', async function (req, res) {
     });
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
 
 
@@ -1004,9 +936,7 @@ app.post('/api/order', async function (req, res) {
 ========================= */
 
 app.post('/api/status', async function (req, res) {
-
   try {
-
     const order =
       req.body &&
       req.body.order;
@@ -1022,20 +952,18 @@ app.post('/api/status', async function (req, res) {
       await provider({
         action:
           'status',
+
         order:
           String(order)
       })
     );
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
 
 
@@ -1044,9 +972,7 @@ app.post('/api/status', async function (req, res) {
 ========================= */
 
 app.post('/api/status/bulk', async function (req, res) {
-
   try {
-
     const input =
       req.body &&
       req.body.orders;
@@ -1068,6 +994,7 @@ app.post('/api/status/bulk', async function (req, res) {
       await provider({
         action:
           'status',
+
         orders:
           orders.join(',')
       });
@@ -1078,23 +1005,20 @@ app.post('/api/status/bulk', async function (req, res) {
     });
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
+
+
 /* =========================
    PROVIDER BALANCE
 ========================= */
 
 app.get('/api/balance', async function (req, res) {
-
   try {
-
     res.json(
       await provider({
         action:
@@ -1103,14 +1027,11 @@ app.get('/api/balance', async function (req, res) {
     );
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
 
 
@@ -1119,9 +1040,7 @@ app.get('/api/balance', async function (req, res) {
 ========================= */
 
 app.post('/api/refill', async function (req, res) {
-
   try {
-
     const order =
       req.body &&
       req.body.order
@@ -1134,19 +1053,17 @@ app.post('/api/refill', async function (req, res) {
       await provider({
         action:
           'refill',
+
         order
       })
     );
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
 
 
@@ -1155,9 +1072,7 @@ app.post('/api/refill', async function (req, res) {
 ========================= */
 
 app.post('/api/cancel', async function (req, res) {
-
   try {
-
     const order =
       req.body &&
       req.body.order
@@ -1170,19 +1085,17 @@ app.post('/api/cancel', async function (req, res) {
       await provider({
         action:
           'cancel',
+
         order
       })
     );
 
   } catch (error) {
-
     res.status(502).json({
       error:
         error.message
     });
-
   }
-
 });
 
 
@@ -1191,14 +1104,12 @@ app.post('/api/cancel', async function (req, res) {
 ========================= */
 
 app.get('*', function (req, res) {
-
   res.sendFile(
     path.join(
       __dirname,
       'index.html'
     )
   );
-
 });
 
 
@@ -1209,11 +1120,9 @@ app.get('*', function (req, res) {
 app.listen(
   PORT,
   function () {
-
     console.log(
       'ASFU SMMZZ backend running on port ' +
       PORT
     );
-
   }
-);  
+);
