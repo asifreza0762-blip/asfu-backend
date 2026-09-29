@@ -20,7 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname));
 
 function requireKey() {
-  if (!API_KEY) throw new Error('SMMZZ_API_KEY is not configured on the server');
+  if (!API_KEY) {
+    throw new Error('SMMZZ_API_KEY is not configured on the server');
+  }
 }
 
 async function provider(params) {
@@ -46,6 +48,7 @@ async function provider(params) {
   const text = await response.text();
 
   let data;
+
   try {
     data = JSON.parse(text);
   } catch (error) {
@@ -200,14 +203,18 @@ app.post('/api/admin/login', async function (req, res) {
     ) {
       return res
         .status(401)
-        .json({ error: 'Invalid email or password' });
+        .json({
+          error: 'Invalid email or password'
+        });
     }
 
     const token =
       crypto.randomBytes(32).toString('hex');
 
     adminTokens.set(token, {
-      expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 7
+      expiresAt:
+        Date.now() +
+        1000 * 60 * 60 * 24 * 7
     });
 
     res.json({ token });
@@ -248,27 +255,21 @@ app.post('/api/payments', async function (req, res) {
       String(req.body?.fileData || '');
 
     if (!Number.isFinite(amount) || amount < 1) {
-      return res
-        .status(400)
-        .json({
-          error: 'Invalid payment amount'
-        });
+      return res.status(400).json({
+        error: 'Invalid payment amount'
+      });
     }
 
     if (!utr) {
-      return res
-        .status(400)
-        .json({
-          error: 'UTR is required'
-        });
+      return res.status(400).json({
+        error: 'UTR is required'
+      });
     }
 
     if (!fileData) {
-      return res
-        .status(400)
-        .json({
-          error: 'Payment screenshot is required'
-        });
+      return res.status(400).json({
+        error: 'Payment screenshot is required'
+      });
     }
 
     const match =
@@ -277,24 +278,21 @@ app.post('/api/payments', async function (req, res) {
       );
 
     if (!match) {
-      return res
-        .status(400)
-        .json({
-          error: 'Invalid screenshot data'
-        });
+      return res.status(400).json({
+        error: 'Invalid screenshot data'
+      });
     }
 
-    const mime = match[1] || 'image/jpeg';
+    const mime =
+      match[1] || 'image/jpeg';
 
     const buffer =
       Buffer.from(match[2], 'base64');
 
     if (buffer.length > 8 * 1024 * 1024) {
-      return res
-        .status(400)
-        .json({
-          error: 'Screenshot must be under 8MB'
-        });
+      return res.status(400).json({
+        error: 'Screenshot must be under 8MB'
+      });
     }
 
     const ext =
@@ -414,11 +412,9 @@ app.get('/api/payments', async function (req, res) {
 app.get('/api/admin/payments', async function (req, res) {
   try {
     if (!adminUser(req)) {
-      return res
-        .status(401)
-        .json({
-          error: 'Admin session expired'
-        });
+      return res.status(401).json({
+        error: 'Admin session expired'
+      });
     }
 
     const rows =
@@ -432,7 +428,6 @@ app.get('/api/admin/payments', async function (req, res) {
       const row of
       (Array.isArray(rows) ? rows : [])
     ) {
-
       let userName = '';
       let userEmail = '';
 
@@ -461,7 +456,6 @@ app.get('/api/admin/payments', async function (req, res) {
 
       if (row.screenshot_url) {
         try {
-
           const signed =
             await supabaseRequest(
               '/storage/v1/object/sign/payment-screenshots/' +
@@ -536,36 +530,50 @@ app.get('/api/admin/payments', async function (req, res) {
 ========================= */
 
 app.patch('/api/admin/payments/:id', async function (req, res) {
-  try {
+    try {
 
     if (!adminUser(req)) {
-      return res
-        .status(401)
-        .json({
-          error: 'Admin session expired'
-        });
+      return res.status(401).json({
+        error: 'Admin session expired'
+      });
     }
 
-    const status =
-      String(req.body?.status || '');
+    /*
+     * Normalize payment status.
+     *
+     * approved / APPROVED / Approved
+     * rejected / REJECTED / Rejected
+     * sab accept honge.
+     */
 
-    if (
-      !['Approved', 'Rejected']
-        .includes(status)
-    ) {
-      return res
-        .status(400)
-        .json({
-          error: 'Invalid payment status'
-        });
+    const rawStatus =
+      String(req.body?.status || '')
+        .trim()
+        .toLowerCase();
+
+    const status =
+      rawStatus === 'approved'
+        ? 'Approved'
+        : rawStatus === 'rejected'
+          ? 'Rejected'
+          : '';
+
+    if (!status) {
+      return res.status(400).json({
+        error: 'Invalid payment status'
+      });
     }
 
     const id =
       encodeURIComponent(req.params.id);
 
+    /*
+     * Get payment.
+     */
+
     const rows =
       await supabaseRequest(
-        '/rest/v1/payments?select=id,user_id,amount,status&id=eq.' +
+        '/rest/v1/payments?select=id,user_id,amount,status&id=' +
           id +
           '&limit=1'
       );
@@ -576,106 +584,193 @@ app.patch('/api/admin/payments/:id', async function (req, res) {
         : rows;
 
     if (!payment) {
-      return res
-        .status(404)
-        .json({
-          error: 'Payment not found'
-        });
+      return res.status(404).json({
+        error: 'Payment not found'
+      });
     }
 
-    if (payment.status !== 'Pending') {
-      return res
-        .status(400)
-        .json({
-          error: 'Payment already reviewed'
-        });
+    if (
+      String(payment.status) !==
+      'Pending'
+    ) {
+      return res.status(400).json({
+        error: 'Payment already reviewed'
+      });
     }
 
+    /*
+     * ATOMIC CLAIM
+     *
+     * Sirf Pending payment hi change hogi.
+     * Isse double click / duplicate request
+     * se double credit nahi hoga.
+     */
 
-    /* APPROVE = ADD MONEY TO CUSTOMER BALANCE */
-
-    if (status === 'Approved') {
-
-      const profiles =
-        await supabaseRequest(
-          '/rest/v1/profiles?select=id,balance&id=eq.' +
-            encodeURIComponent(
-              payment.user_id
-            ) +
-            '&limit=1'
-        );
-
-      const profile =
-        Array.isArray(profiles)
-          ? profiles[0]
-          : profiles;
-
-      if (!profile) {
-        return res
-          .status(400)
-          .json({
-            error:
-              'Customer profile not found'
-          });
-      }
-
-      const balance =
-        Number(profile.balance || 0) +
-        Number(payment.amount || 0);
-
+    const claimedRows =
       await supabaseRequest(
-        '/rest/v1/profiles?id=eq.' +
-          encodeURIComponent(
-            payment.user_id
-          ),
+        '/rest/v1/payments?id=' +
+          id +
+          '&status=eq.Pending',
         {
           method: 'PATCH',
           headers: {
             'Content-Type':
               'application/json',
             Prefer:
-              'return=minimal'
+              'return=representation'
           },
           body: JSON.stringify({
-            balance
+            status,
+            updated_at:
+              new Date().toISOString()
           })
         }
       );
+
+    const claimed =
+      Array.isArray(claimedRows)
+        ? claimedRows[0]
+        : claimedRows;
+
+    if (!claimed) {
+      return res.status(409).json({
+        error:
+          'Payment already reviewed'
+      });
     }
 
+    /*
+     * APPROVED
+     *
+     * Customer ke balance mein
+     * payment amount add hoga.
+     */
 
-    /* UPDATE PAYMENT STATUS */
+    if (status === 'Approved') {
 
-    await supabaseRequest(
-      '/rest/v1/payments?id=eq.' + id,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type':
-            'application/json',
-          Prefer:
-            'return=minimal'
-        },
-        body: JSON.stringify({
-          status,
-          updated_at:
-            new Date().toISOString()
-        })
+      try {
+
+        const profiles =
+          await supabaseRequest(
+            '/rest/v1/profiles?select=id,balance&id=eq.' +
+              encodeURIComponent(
+                payment.user_id
+              ) +
+              '&limit=1'
+          );
+
+        const profile =
+          Array.isArray(profiles)
+            ? profiles[0]
+            : profiles;
+
+        if (!profile) {
+          throw new Error(
+            'Customer profile not found'
+          );
+        }
+
+        const currentBalance =
+          Number(
+            profile.balance || 0
+          );
+
+        const amount =
+          Number(
+            payment.amount || 0
+          );
+
+        if (
+          !Number.isFinite(
+            currentBalance
+          ) ||
+          !Number.isFinite(amount) ||
+          amount < 0
+        ) {
+          throw new Error(
+            'Invalid payment amount or customer balance'
+          );
+        }
+
+        await supabaseRequest(
+          '/rest/v1/profiles?id=eq.' +
+            encodeURIComponent(
+              payment.user_id
+            ),
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type':
+                'application/json',
+              Prefer:
+                'return=minimal'
+            },
+            body: JSON.stringify({
+              balance:
+                currentBalance +
+                amount
+            })
+          }
+        );
+
+      } catch (creditError) {
+
+        /*
+         * Balance update fail hua to
+         * payment ko Pending mein rollback karo.
+         */
+
+        try {
+
+          await supabaseRequest(
+            '/rest/v1/payments?id=' +
+              id +
+              '&status=eq.Approved',
+            {
+              method: 'PATCH',
+              headers: {
+                'Content-Type':
+                  'application/json',
+                Prefer:
+                  'return=minimal'
+              },
+              body: JSON.stringify({
+                status: 'Pending',
+                updated_at:
+                  new Date().toISOString()
+              })
+            }
+          );
+
+        } catch (rollbackError) {}
+
+        throw creditError;
       }
-    );
+    }
+
+    /*
+     * REJECTED
+     *
+     * Customer balance mein
+     * koi paisa add nahi hoga.
+     */
 
     res.json({
       ok: true,
-      status
+      status,
+      paymentId: payment.id
     });
 
   } catch (error) {
 
     res.status(500).json({
-      error: error.message
+      error:
+        error.message ||
+        'Could not update payment'
     });
 
   }
+
 });
 
 
@@ -689,7 +784,8 @@ app.get('/api/health', function (req, res) {
     ok: true,
     configured:
       Boolean(API_KEY),
-    provider: 'SMMZZ'
+    provider:
+      'SMMZZ'
   });
 
 });
@@ -750,8 +846,10 @@ app.get('/api/services', async function (req, res) {
         name:
           String(
             service.name ||
-            ('Service ' +
-              service.service)
+            (
+              'Service ' +
+              service.service
+            )
           ),
 
         type:
@@ -782,16 +880,28 @@ app.get('/api/services', async function (req, res) {
           Number(
             service.max || 0
           )
+
       });
+
     }
 
     res.json({
-      services: grouped,
-      currency: 'INR',
-      providerCurrency: 'USD',
-      fx: FX,
+
+      services:
+        grouped,
+
+      currency:
+        'INR',
+
+      providerCurrency:
+        'USD',
+
+      fx:
+        FX,
+
       multiplier:
         MULTIPLIER
+
     });
 
   } catch (error) {
@@ -837,22 +947,26 @@ app.post('/api/order', async function (req, res) {
       !url ||
       !quantity
     ) {
-      return res
-        .status(400)
-        .json({
-          error:
-            'service, url and quantity are required'
-        });
+      return res.status(400).json({
+        error:
+          'service, url and quantity are required'
+      });
     }
 
     const params = {
-      action: 'add',
+
+      action:
+        'add',
+
       service:
         String(service),
+
       url:
         String(url),
+
       quantity:
         String(quantity)
+
     };
 
     if (comments) {
@@ -898,17 +1012,16 @@ app.post('/api/status', async function (req, res) {
       req.body.order;
 
     if (!order) {
-      return res
-        .status(400)
-        .json({
-          error:
-            'order is required'
-        });
+      return res.status(400).json({
+        error:
+          'order is required'
+      });
     }
 
     res.json(
       await provider({
-        action: 'status',
+        action:
+          'status',
         order:
           String(order)
       })
@@ -953,13 +1066,15 @@ app.post('/api/status/bulk', async function (req, res) {
 
     const data =
       await provider({
-        action: 'status',
+        action:
+          'status',
         orders:
           orders.join(',')
       });
 
     res.json({
-      orders: data
+      orders:
+        data
     });
 
   } catch (error) {
@@ -972,8 +1087,6 @@ app.post('/api/status/bulk', async function (req, res) {
   }
 
 });
-
-
 /* =========================
    PROVIDER BALANCE
 ========================= */
@@ -984,7 +1097,8 @@ app.get('/api/balance', async function (req, res) {
 
     res.json(
       await provider({
-        action: 'balance'
+        action:
+          'balance'
       })
     );
 
@@ -1018,7 +1132,8 @@ app.post('/api/refill', async function (req, res) {
 
     res.json(
       await provider({
-        action: 'refill',
+        action:
+          'refill',
         order
       })
     );
@@ -1053,7 +1168,8 @@ app.post('/api/cancel', async function (req, res) {
 
     res.json(
       await provider({
-        action: 'cancel',
+        action:
+          'cancel',
         order
       })
     );
@@ -1086,12 +1202,18 @@ app.get('*', function (req, res) {
 });
 
 
+/* =========================
+   START SERVER
+========================= */
+
 app.listen(
   PORT,
   function () {
+
     console.log(
       'ASFU SMMZZ backend running on port ' +
       PORT
     );
+
   }
-);
+);  
