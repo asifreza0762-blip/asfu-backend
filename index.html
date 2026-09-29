@@ -859,7 +859,6 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 #page-neworder .smmzz-option:hover{background:#eef6ff}
 #page-neworder .smmzz-option img{width:35px;height:35px;object-fit:contain;border-radius:8px;flex:none}
 #page-neworder .smmzz-option .smmzz-num{background:#222;color:#fff;border-radius:13px;padding:5px 8px;font-size:12px;flex:none}
-#page-neworder .smmzz-option .smmzz-price{margin-left:auto;flex:none;background:rgba(62,103,255,.14);border:1px solid rgba(92,130,255,.28);color:#9db9ff;border-radius:10px;padding:5px 8px;font-size:12px;font-weight:800;white-space:nowrap}
 #page-neworder .smmzz-hidden-native{position:absolute!important;left:-99999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 #page-neworder .smmzz-info{background:#f5f5f6;border-radius:22px;padding:16px 22px;margin:10px 0 16px;box-shadow:0 4px 10px rgba(0,0,0,.10);color:#18202b;line-height:1.65}
 #page-neworder .smmzz-info .row{margin:5px 0;font-weight:600}
@@ -1655,7 +1654,7 @@ async function changePasswordFromProfile(){
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChangePassword()});
 
-function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;const ticketCountEl=document.getElementById('adminTickets');if(ticketCountEl)ticketCountEl.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;const ticketCountEl=document.getElementById('adminTickets');if(ticketCountEl)ticketCountEl.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
+function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
 function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminTickets.textContent=db.tickets.length;
   const adminSalesEl=document.getElementById('adminSales'),adminProfitEl=document.getElementById('adminProfit'),adminCompletedEl=document.getElementById('adminCompleted'),adminWalletEl=document.getElementById('adminWalletAdded');
   const completedOrders=db.orders.filter(o=>o.status==='Completed');
@@ -1677,30 +1676,7 @@ async function loadAdminPayments(){const box=document.getElementById('adminPayme
       adminPayments.textContent=String(pending.length);
       const fundsEl=document.getElementById('adminWalletAdded');
       if(fundsEl) fundsEl.textContent='₹'+approvedFunds.toFixed(2);box.innerHTML=a.length?a.map(p=>`<div class="adminPaymentCard"><div class="adminPaymentTop"><div><b>#${p.id}</b> ${esc(p.userName||p.userId||'')}<div class="adminPaymentMeta">Amount: <b style="color:#edf5ff">₹${Number(p.amount||0).toFixed(2)}</b><br>UTR: <b style="color:#dce8f8">${esc(p.utr||'Not available')}</b><br>Reference: ${esc(p.paymentReference||'Not available')}<br>${esc(p.createdAt||'')}</div></div><span class="pill ${p.status==='Approved'?'green':p.status==='Rejected'?'red':'yellow'}">${esc(p.status||'Pending')}</span></div>${p.url?`<div class="adminPaymentMeta">URL: <a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a></div>`:''}${p.screenshotUrl?`<img class="adminPaymentShot" src="${esc(p.screenshotUrl)}" alt="Payment screenshot">`:''}<small class="muted">${esc(p.fileName||'Payment screenshot')}</small>${p.status==='Pending'?`<div class="adminPaymentActions"><button class="btn" onclick="verifyPayment(${p.id},'Approved')">✓ Approve Payment</button><button class="btn danger" onclick="verifyPayment(${p.id},'Rejected')">✕ Reject</button></div>`:`<div class="adminPaymentMeta">Reviewed: <b>${esc(p.status)}</b></div>`}</div>`).join(''):'No payment requests.'}catch(error){box.innerHTML=`Unable to load payment requests. ${esc(error.message||'')}`}}
-async function verifyPayment(id,status){
-  const token=sessionStorage.getItem(KEY+'_admin_token');
-  if(!token)return toast('Admin session expired');
-  const raw=String(status||'').trim().toLowerCase();
-  const apiStatus=raw==='approved'?'Approved':raw==='rejected'?'Rejected':'';
-  if(!apiStatus)return toast('Invalid payment action');
-  const key=String(id);
-  if(window.__asfuPaymentActions&&window.__asfuPaymentActions[key])return toast('Payment action already in progress');
-  window.__asfuPaymentActions=window.__asfuPaymentActions||{};
-  window.__asfuPaymentActions[key]=true;
-  try{
-    await api('/admin/payments/'+encodeURIComponent(id),{
-      method:'PATCH',
-      headers:{'Authorization':'Bearer '+token},
-      body:JSON.stringify({status:apiStatus})
-    });
-    await loadAdminPayments();
-    toast('Payment '+apiStatus);
-  }catch(error){
-    toast(error.message||'Could not update payment');
-  }finally{
-    delete window.__asfuPaymentActions[key];
-  }
-}
+async function verifyPayment(id,status){const token=sessionStorage.getItem(KEY+'_admin_token');if(!token)return toast('Admin session expired');try{await api('/admin/payments/'+encodeURIComponent(id),{method:'PATCH',headers:{'Authorization':'Bearer '+token},body:JSON.stringify({status})});await loadAdminPayments();toast('Payment '+status)}catch(error){toast(error.message||'Could not update payment')}}
 function setTicketStatus(id,status){let t=db.tickets.find(x=>x.id===id);if(!t)return;t.status=status;save();renderAdmin();toast('Ticket status updated')}
 function setOrder(id,status){let o=db.orders.find(x=>x.id===id);if(o){o.status=status;save();renderAdmin();toast('Order updated')}}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -1735,17 +1711,8 @@ loadServices();
     try{
       const data=await api('/services');
       liveServices=data.services||{};
-      // Customer price = provider price + 40% (provider rates are already INR per 1K).
-      Object.keys(liveServices).forEach(cat=>{
-        (liveServices[cat]||[]).forEach(s=>{
-          const providerRate=Number(s.providerRate!=null?s.providerRate:s.ratePer1k||0);
-          const customerRate=providerRate>0 ? providerRate*1.40 : Number(s.ratePer1k||0);
-          s.ratePer1k=customerRate;
-          s.ratePerUnit=customerRate/1000;
-        });
-      });
       window.__asfuLiveServices=liveServices;
-      window.__asfuProviderFx=1;
+      window.__asfuProviderFx=Number(data.fx||85);
       providerOnline=true;
       renderLiveServices();
       window.__asfuProviderOnline=true;
@@ -1795,10 +1762,21 @@ loadServices();
     const btn=document.querySelector('#page-neworder .btn:not(.secondary)');
     if(btn){btn.disabled=true;btn.textContent='Placing Order...';}
     try{
-      const result=await api('/order',{method:'POST',body:JSON.stringify({service:s.providerServiceId,url:t,quantity:q,comments:'',interval:''})});
-      current.balance-=amount;
-      const o={id:db.next.order++,providerOrderId:result.order,providerServiceId:s.providerServiceId,providerRate:Number(s.providerRate||0),sellRatePerUnit:Number(s.ratePerUnit||0),userId:current.id,service:s.name,target:t,qty:q,amount,status:'Pending',providerStatus:'Pending',date:new Date().toLocaleString()};
-      db.orders.push(o);save();refresh();toast('Order placed successfully • Provider #'+result.order);page('orders');
+      let authHeader={};
+      try{
+        const sessionData=await window.asfuSupabase?.auth?.getSession();
+        const accessToken=sessionData?.data?.session?.access_token||'';
+        if(accessToken)authHeader={Authorization:'Bearer '+accessToken};
+      }catch(e){}
+      const result=await api('/order',{method:'POST',headers:authHeader,body:JSON.stringify({service:s.providerServiceId,url:t,quantity:q,comments:'',interval:''})});
+      const chargedAmount=Number(result.charge||amount);
+      current.balance=Math.max(0,Number(current.balance||0)-chargedAmount);
+      const u=db.users.find(x=>String(x.id)===String(current.id));
+      if(u)u.balance=current.balance;
+      const o={id:db.next.order++,providerOrderId:result.order,providerServiceId:s.providerServiceId,providerRate:Number(s.providerRate||0),sellRatePerUnit:Number(s.ratePerUnit||0),userId:current.id,service:s.name,target:t,qty:q,amount:chargedAmount,status:'Pending',providerStatus:'Pending',date:new Date().toLocaleString()};
+      db.orders.push(o);save();refresh();
+      if(typeof syncCustomerBalance==='function')await syncCustomerBalance();
+      toast('Order placed successfully • Provider #'+result.order);page('orders');
     }catch(e){toast(e.message||'Provider order failed');}
     finally{if(btn){btn.disabled=false;btn.textContent='Submit Order';}}
   };
@@ -2131,7 +2109,7 @@ loadServices();
     const arr=serviceArr(); const q=String(filter||'').toLowerCase().trim();
     const menu=svcPicker.querySelector('.smmzz-menu');
     const list=arr.map((s,i)=>({s,i})).filter(x=>{const hay=(String(x.s.name||'')+' '+String(x.s.providerServiceId||x.s.service||'')).toLowerCase();return !q||hay.includes(q)});
-    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);const rate=Number(x.s.ratePer1k||0);const price=Number.isFinite(rate)&&rate>0?`₹${rate.toFixed(2)} / 1K`:'Price —';return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span><span class="smmzz-price">${price}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
+    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
     menu.querySelectorAll('.smmzz-option').forEach(b=>b.onclick=function(){svc.value=this.dataset.index;svcPicker.classList.remove('open');updateInfo();if(typeof window.updateOrderTotal==='function')window.updateOrderTotal();});
     const idx=Number(svc.value)||0, s=arr[idx];
     if(s){const sid=s.providerServiceId||s.service||String(idx+1);setCurrent(svcPicker,`<span class="smmzz-num">${esc(sid)}</span><span>${esc(s.name||'Select service')}</span>`);}
@@ -2245,4 +2223,12 @@ loadServices();
   }
 })();
 </script>
+
+<style id="asfu-orders-mobile-safe-bottom-v1">
+@media(max-width:600px){
+  #page-orders{padding-bottom:120px!important;box-sizing:border-box}
+  #page-orders .ordersTableWrap{margin-bottom:18px!important}
+  #page-orders .ordersTable{padding-bottom:4px}
+}
+</style>
 </body></html>
