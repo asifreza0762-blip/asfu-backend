@@ -1655,7 +1655,7 @@ async function changePasswordFromProfile(){
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChangePassword()});
 
-function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
+function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;var tc=document.getElementById('myTicketCount');if(tc)tc.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;var tc=document.getElementById('myTicketCount');if(tc)tc.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
 function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminTickets.textContent=db.tickets.length;
   const adminSalesEl=document.getElementById('adminSales'),adminProfitEl=document.getElementById('adminProfit'),adminCompletedEl=document.getElementById('adminCompleted'),adminWalletEl=document.getElementById('adminWalletAdded');
   const completedOrders=db.orders.filter(o=>o.status==='Completed');
@@ -1712,17 +1712,8 @@ loadServices();
     try{
       const data=await api('/services');
       liveServices=data.services||{};
-      // Customer price = provider price + 40% (provider rates are already INR per 1K).
-      Object.keys(liveServices).forEach(cat=>{
-        (liveServices[cat]||[]).forEach(s=>{
-          const providerRate=Number(s.providerRate!=null?s.providerRate:s.ratePer1k||0);
-          const customerRate=providerRate>0 ? providerRate*1.40 : Number(s.ratePer1k||0);
-          s.ratePer1k=customerRate;
-          s.ratePerUnit=customerRate/1000;
-        });
-      });
       window.__asfuLiveServices=liveServices;
-      window.__asfuProviderFx=1;
+      window.__asfuProviderFx=Number(data.fx||85);
       providerOnline=true;
       renderLiveServices();
       window.__asfuProviderOnline=true;
