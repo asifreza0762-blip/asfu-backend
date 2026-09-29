@@ -859,6 +859,7 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 #page-neworder .smmzz-option:hover{background:#eef6ff}
 #page-neworder .smmzz-option img{width:35px;height:35px;object-fit:contain;border-radius:8px;flex:none}
 #page-neworder .smmzz-option .smmzz-num{background:#222;color:#fff;border-radius:13px;padding:5px 8px;font-size:12px;flex:none}
+#page-neworder .smmzz-option .smmzz-price{margin-left:auto;flex:none;background:rgba(62,103,255,.14);border:1px solid rgba(92,130,255,.28);color:#9db9ff;border-radius:10px;padding:5px 8px;font-size:12px;font-weight:800;white-space:nowrap}
 #page-neworder .smmzz-hidden-native{position:absolute!important;left:-99999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 #page-neworder .smmzz-info{background:#f5f5f6;border-radius:22px;padding:16px 22px;margin:10px 0 16px;box-shadow:0 4px 10px rgba(0,0,0,.10);color:#18202b;line-height:1.65}
 #page-neworder .smmzz-info .row{margin:5px 0;font-weight:600}
@@ -2098,7 +2099,7 @@ loadServices();
     const arr=serviceArr(); const q=String(filter||'').toLowerCase().trim();
     const menu=svcPicker.querySelector('.smmzz-menu');
     const list=arr.map((s,i)=>({s,i})).filter(x=>{const hay=(String(x.s.name||'')+' '+String(x.s.providerServiceId||x.s.service||'')).toLowerCase();return !q||hay.includes(q)});
-    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
+    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);const rate=Number(x.s.ratePer1k||0);const price=Number.isFinite(rate)&&rate>0?`₹${rate.toFixed(2)} / 1K`:'Price —';return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span><span class="smmzz-price">${price}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
     menu.querySelectorAll('.smmzz-option').forEach(b=>b.onclick=function(){svc.value=this.dataset.index;svcPicker.classList.remove('open');updateInfo();if(typeof window.updateOrderTotal==='function')window.updateOrderTotal();});
     const idx=Number(svc.value)||0, s=arr[idx];
     if(s){const sid=s.providerServiceId||s.service||String(idx+1);setCurrent(svcPicker,`<span class="smmzz-num">${esc(sid)}</span><span>${esc(s.name||'Select service')}</span>`);}
