@@ -859,6 +859,7 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 #page-neworder .smmzz-option:hover{background:#eef6ff}
 #page-neworder .smmzz-option img{width:35px;height:35px;object-fit:contain;border-radius:8px;flex:none}
 #page-neworder .smmzz-option .smmzz-num{background:#222;color:#fff;border-radius:13px;padding:5px 8px;font-size:12px;flex:none}
+#page-neworder .smmzz-option .smmzz-price{margin-left:auto;flex:none;background:rgba(62,103,255,.14);border:1px solid rgba(92,130,255,.28);color:#9db9ff;border-radius:10px;padding:5px 8px;font-size:12px;font-weight:800;white-space:nowrap}
 #page-neworder .smmzz-hidden-native{position:absolute!important;left:-99999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 #page-neworder .smmzz-info{background:#f5f5f6;border-radius:22px;padding:16px 22px;margin:10px 0 16px;box-shadow:0 4px 10px rgba(0,0,0,.10);color:#18202b;line-height:1.65}
 #page-neworder .smmzz-info .row{margin:5px 0;font-weight:600}
@@ -1072,6 +1073,68 @@ html.asfu-session-boot #app{display:block!important;visibility:visible}
 <style id="asfu-profile-password-pro-v1">
 .asfuProfileActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}.asfuProfileActions .btn{margin-top:0}.asfuPasswordBtn{background:linear-gradient(145deg,#122441,#0c1b32)!important;border:1px solid #2b4770!important;color:#dce9ff!important}.asfuPasswordModal{display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}.asfuPasswordModal.open{display:flex}.asfuPasswordOverlay{position:absolute;inset:0;background:rgba(2,7,18,.76);backdrop-filter:blur(6px)}.asfuPasswordBox{position:relative;width:min(440px,100%);padding:24px;border:1px solid #29466f;border-radius:22px;background:linear-gradient(145deg,#0d1d35,#071224);box-shadow:0 24px 70px rgba(0,0,0,.55);color:#eef4ff}.asfuPasswordBox h2{margin:0 0 7px;font-size:23px}.asfuPasswordHint{margin:0 0 18px;color:#8fa6ca;font-size:12px;line-height:1.5}.asfuPasswordBox label{display:block;margin:12px 0 7px;color:#aebfda;font-size:13px;font-weight:800}.asfuPasswordBox .input{width:100%;box-sizing:border-box;background:#071225;border:1px solid #253e64;color:#eef4ff}.asfuPasswordBox .btn{width:100%;margin-top:16px}.asfuPasswordIcon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:linear-gradient(135deg,#713cff,#287cff);box-shadow:0 10px 25px rgba(55,90,255,.22)}.asfuPasswordClose{position:absolute;right:13px;top:10px;border:0;background:transparent;color:#8fa6ca;font-size:28px;cursor:pointer;line-height:1}.asfuPasswordClose:hover{color:#fff}@media(max-width:600px){.asfuProfileActions{flex-direction:column}.asfuProfileActions .btn{width:100%}.asfuPasswordModal{padding:14px 14px 20px;z-index:2147483000}.asfuPasswordBox{padding:21px;border-radius:19px;max-height:calc(100dvh - 28px);margin-bottom:0}.password-modal-open .asfuMobileNav{display:none!important}.password-modal-open{overflow:hidden!important}}
 </style>
+
+<style id="asfu-premium-suite-v1">
+/* ASFU Premium Suite — visual-only layer; existing JS/API untouched */
+:root{
+  --asfu-glass:rgba(11,25,46,.78);
+  --asfu-border:rgba(89,127,190,.25);
+  --asfu-border-hi:rgba(91,145,255,.48);
+  --asfu-shadow:0 22px 60px rgba(0,0,0,.28);
+}
+body{background:radial-gradient(circle at 78% -5%,rgba(42,103,214,.18),transparent 28%),radial-gradient(circle at 12% 28%,rgba(113,60,255,.08),transparent 25%),var(--bg)}
+.topbar{height:74px;padding:0 clamp(14px,4vw,5%);background:rgba(5,13,26,.84);border-bottom:1px solid rgba(93,132,201,.20);box-shadow:0 8px 30px rgba(0,0,0,.16)}
+#app .appHeaderBrand{padding-left:2px}
+#app .appHeaderBrand b{font-size:18px;letter-spacing:.15px;text-shadow:0 0 24px rgba(79,145,255,.18)}
+.layout{grid-template-columns:258px 1fr}
+.side{padding:22px 15px;background:linear-gradient(180deg,rgba(7,17,31,.98),rgba(5,13,25,.98));border-right:1px solid rgba(86,123,184,.20);box-shadow:10px 0 35px rgba(0,0,0,.10)}
+.side h3{padding:0 10px;margin:4px 0 14px;color:#7188ac;font-size:10px;letter-spacing:1.7px;text-transform:uppercase}
+.side .btn.secondary{position:relative;margin:4px 0;padding:12px 13px;border-radius:12px;border-color:transparent;background:transparent;color:#9eb1d0;font-weight:700;transition:.18s ease}
+.side .btn.secondary:hover{background:rgba(49,93,161,.12);border-color:rgba(86,130,204,.16);color:#eef5ff;transform:translateX(2px)}
+.main{max-width:1460px;padding:30px clamp(15px,3vw,34px) 70px}
+.pageHead h1{font-size:clamp(28px,3vw,38px);letter-spacing:-.04em}.pageHead .muted{font-size:12px}
+.card,.ordersMini,.asfuStat,.asfuWelcome,.asfuDashHero,.asfuPopular,.asfuQuickActions,.asfuSupport{border-color:var(--asfu-border)!important;box-shadow:var(--asfu-shadow)}
+.asfuWelcome{border:1px solid var(--asfu-border)!important;border-radius:22px!important;padding:20px 21px!important;background:radial-gradient(circle at 0 50%,rgba(71,111,255,.16),transparent 34%),linear-gradient(145deg,#102447,#08172c)!important}
+.asfuAvatar{border:1px solid rgba(112,159,255,.30);box-shadow:0 10px 28px rgba(0,0,0,.28),0 0 0 5px rgba(65,116,221,.05)}
+.asfuBalance{border:1px solid rgba(94,139,226,.23);border-radius:16px!important;background:rgba(4,13,28,.40)!important;backdrop-filter:blur(10px)}
+.asfuBalance strong{letter-spacing:-.035em}.asfuBalanceBtn{border:1px solid rgba(255,255,255,.08)!important}
+.asfuStats{gap:13px;margin:14px 0 18px}
+.asfuStat{border:1px solid var(--asfu-border)!important;border-radius:17px!important;background:linear-gradient(145deg,#0c1a30,#081425)!important;padding:17px!important}
+.asfuStatIcon{box-shadow:0 8px 22px rgba(0,0,0,.20)}
+.asfuStat b{letter-spacing:-.04em}.asfuStat span{color:#7f96ba}
+.asfuDashHero{border:1px solid rgba(93,145,255,.32)!important;border-radius:23px!important;min-height:190px;padding:28px 30px!important;background:radial-gradient(circle at 88% 18%,rgba(94,141,255,.34),transparent 27%),linear-gradient(118deg,#0d1d3c,#183878 58%,#101f45)!important}
+.asfuDashHeroText h2{font-size:clamp(25px,3vw,35px);letter-spacing:-.045em}.asfuDashHeroText p{font-size:12px;color:#c6d6ef}
+.asfuDashSocials img{border:1px solid rgba(255,255,255,.16);box-shadow:0 7px 20px rgba(0,0,0,.18);transition:.18s}.asfuDashSocials img:hover{transform:translateY(-2px)}
+.asfuPopular,.asfuQuickActions,.asfuSupport{border:1px solid var(--asfu-border)!important;border-radius:20px!important;background:linear-gradient(145deg,#0b192e,#071223)!important}
+.asfuPopular{margin-top:18px;padding:20px!important}.asfuPopularHead h2,.asfuQuickHead h2{font-size:20px;letter-spacing:-.025em}.asfuViewAll{border:1px solid rgba(80,128,210,.25)!important;background:#0c1b32!important;color:#9ec0ff!important}
+.asfuServiceGrid{gap:10px!important}.asfuServiceCard{border:1px solid rgba(73,108,168,.20)!important;border-radius:15px!important;background:linear-gradient(145deg,#0e1d34,#091426)!important;transition:.18s ease!important}.asfuServiceCard:hover{transform:translateY(-3px)!important;border-color:var(--asfu-border-hi)!important;box-shadow:0 16px 28px rgba(0,0,0,.22)}
+.asfuQuickActions{margin-top:18px!important;padding:20px!important}.asfuQuickCard{border:1px solid rgba(73,108,168,.20)!important;border-radius:14px!important;background:#0a172a!important;transition:.18s ease!important}.asfuQuickCard:hover{transform:translateY(-2px);border-color:var(--asfu-border-hi)!important;background:#0c1b31!important}
+#page-neworder{max-width:980px}
+#page-neworder>.card{padding:24px!important;border-radius:22px!important;background:linear-gradient(145deg,#0c1b31,#071325)!important;border:1px solid var(--asfu-border)!important;box-shadow:var(--asfu-shadow)!important}
+#page-neworder label{display:block;color:#aebfda;font-size:12px;font-weight:800;letter-spacing:.1px;margin:13px 0 6px}
+#page-neworder .input,#page-neworder .select{min-height:50px;border-radius:13px;border-color:rgba(76,116,181,.28);background:#061122;transition:.18s}
+#page-neworder .input:focus,#page-neworder .select:focus{border-color:#4387ff;box-shadow:0 0 0 4px rgba(52,126,255,.10)}
+#orderTotalBox{border-radius:14px!important;background:linear-gradient(135deg,rgba(24,48,84,.92),rgba(10,26,49,.92))!important;border-color:rgba(79,132,220,.28)!important;padding:15px!important}
+#page-neworder>.card>.btn{width:100%;min-height:51px;margin-top:8px;border-radius:14px;box-shadow:0 12px 28px rgba(40,124,255,.20)}
+#page-orders .ordersOverview{gap:13px!important;margin-bottom:15px}
+#page-orders .ordersMini{border:1px solid var(--asfu-border)!important;border-radius:17px!important;background:linear-gradient(145deg,#0c1a30,#081324)!important;padding:17px!important}
+#page-orders .ordersMini span{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#7890b4}.ordersMini b{font-size:23px;letter-spacing:-.04em}
+#page-orders .ordersTableWrap{border:1px solid var(--asfu-border)!important;border-radius:20px!important;background:linear-gradient(145deg,#0b192e,#071223)!important;box-shadow:var(--asfu-shadow);padding:5px!important}
+#page-orders .ordersTable th{color:#7189ad;font-size:10px;text-transform:uppercase;letter-spacing:.7px;border-bottom-color:rgba(81,119,180,.18)}
+#page-orders .ordersTable td{border-bottom-color:rgba(81,119,180,.12);font-size:12px}
+#page-funds .payment-flow,#page-tickets .ticketForm,#page-profile .card{filter:drop-shadow(0 10px 20px rgba(0,0,0,.10))}
+#page-funds .payment-flow .card,#page-tickets .card,#page-profile .card{border-color:var(--asfu-border)!important}
+.btn{box-shadow:0 8px 22px rgba(40,124,255,.12);transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}.btn:hover{transform:translateY(-1px);box-shadow:0 11px 27px rgba(40,124,255,.18)}.btn:active{transform:translateY(0)}
+.toast{border-color:rgba(89,139,220,.34)}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.main{padding-top:22px}.side{background:#07111ff7;backdrop-filter:blur(18px);box-shadow:18px 0 50px rgba(0,0,0,.40)}}
+@media(max-width:600px){
+ .topbar{height:68px}.main{padding:15px 12px 94px}.pageHead{margin-bottom:15px}.pageHead h1{font-size:27px}
+ .asfuWelcome{border-radius:17px!important;padding:14px!important}.asfuStats{gap:8px;margin:10px 0 13px}.asfuStat{min-height:80px;padding:12px!important;border-radius:14px!important}.asfuStat b{font-size:20px}.asfuDashHero{min-height:155px;border-radius:18px!important;padding:19px 16px!important}.asfuPopular,.asfuQuickActions,.asfuSupport{border-radius:16px!important;padding:14px!important}
+ #page-neworder>.card{padding:16px!important;border-radius:18px!important}.ordersMini{border-radius:14px!important;padding:13px!important}.ordersMini b{font-size:19px}
+ #page-orders .ordersTableWrap{padding:4px!important;border-radius:17px!important}
+}
+</style>
+
 </head>
 <body>
 <div id="landing">
@@ -1654,7 +1717,7 @@ async function changePasswordFromProfile(){
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChangePassword()});
 
-function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;ticketCount.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
+function refresh(){if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;const ticketCountEl=document.getElementById('adminTickets');if(ticketCountEl)ticketCountEl.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;const ticketCountEl=document.getElementById('adminTickets');if(ticketCountEl)ticketCountEl.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
 function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminTickets.textContent=db.tickets.length;
   const adminSalesEl=document.getElementById('adminSales'),adminProfitEl=document.getElementById('adminProfit'),adminCompletedEl=document.getElementById('adminCompleted'),adminWalletEl=document.getElementById('adminWalletAdded');
   const completedOrders=db.orders.filter(o=>o.status==='Completed');
@@ -1676,7 +1739,30 @@ async function loadAdminPayments(){const box=document.getElementById('adminPayme
       adminPayments.textContent=String(pending.length);
       const fundsEl=document.getElementById('adminWalletAdded');
       if(fundsEl) fundsEl.textContent='₹'+approvedFunds.toFixed(2);box.innerHTML=a.length?a.map(p=>`<div class="adminPaymentCard"><div class="adminPaymentTop"><div><b>#${p.id}</b> ${esc(p.userName||p.userId||'')}<div class="adminPaymentMeta">Amount: <b style="color:#edf5ff">₹${Number(p.amount||0).toFixed(2)}</b><br>UTR: <b style="color:#dce8f8">${esc(p.utr||'Not available')}</b><br>Reference: ${esc(p.paymentReference||'Not available')}<br>${esc(p.createdAt||'')}</div></div><span class="pill ${p.status==='Approved'?'green':p.status==='Rejected'?'red':'yellow'}">${esc(p.status||'Pending')}</span></div>${p.url?`<div class="adminPaymentMeta">URL: <a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.url)}</a></div>`:''}${p.screenshotUrl?`<img class="adminPaymentShot" src="${esc(p.screenshotUrl)}" alt="Payment screenshot">`:''}<small class="muted">${esc(p.fileName||'Payment screenshot')}</small>${p.status==='Pending'?`<div class="adminPaymentActions"><button class="btn" onclick="verifyPayment(${p.id},'Approved')">✓ Approve Payment</button><button class="btn danger" onclick="verifyPayment(${p.id},'Rejected')">✕ Reject</button></div>`:`<div class="adminPaymentMeta">Reviewed: <b>${esc(p.status)}</b></div>`}</div>`).join(''):'No payment requests.'}catch(error){box.innerHTML=`Unable to load payment requests. ${esc(error.message||'')}`}}
-async function verifyPayment(id,status){const token=sessionStorage.getItem(KEY+'_admin_token');if(!token)return toast('Admin session expired');try{await api('/admin/payments/'+encodeURIComponent(id),{method:'PATCH',headers:{'Authorization':'Bearer '+token},body:JSON.stringify({status})});await loadAdminPayments();toast('Payment '+status)}catch(error){toast(error.message||'Could not update payment')}}
+async function verifyPayment(id,status){
+  const token=sessionStorage.getItem(KEY+'_admin_token');
+  if(!token)return toast('Admin session expired');
+  const raw=String(status||'').trim().toLowerCase();
+  const apiStatus=raw==='approved'?'Approved':raw==='rejected'?'Rejected':'';
+  if(!apiStatus)return toast('Invalid payment action');
+  const key=String(id);
+  if(window.__asfuPaymentActions&&window.__asfuPaymentActions[key])return toast('Payment action already in progress');
+  window.__asfuPaymentActions=window.__asfuPaymentActions||{};
+  window.__asfuPaymentActions[key]=true;
+  try{
+    await api('/admin/payments/'+encodeURIComponent(id),{
+      method:'PATCH',
+      headers:{'Authorization':'Bearer '+token},
+      body:JSON.stringify({status:apiStatus})
+    });
+    await loadAdminPayments();
+    toast('Payment '+apiStatus);
+  }catch(error){
+    toast(error.message||'Could not update payment');
+  }finally{
+    delete window.__asfuPaymentActions[key];
+  }
+}
 function setTicketStatus(id,status){let t=db.tickets.find(x=>x.id===id);if(!t)return;t.status=status;save();renderAdmin();toast('Ticket status updated')}
 function setOrder(id,status){let o=db.orders.find(x=>x.id===id);if(o){o.status=status;save();renderAdmin();toast('Order updated')}}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -1711,8 +1797,17 @@ loadServices();
     try{
       const data=await api('/services');
       liveServices=data.services||{};
+      // Customer price = provider price + 40% (provider rates are already INR per 1K).
+      Object.keys(liveServices).forEach(cat=>{
+        (liveServices[cat]||[]).forEach(s=>{
+          const providerRate=Number(s.providerRate!=null?s.providerRate:s.ratePer1k||0);
+          const customerRate=providerRate>0 ? providerRate*1.40 : Number(s.ratePer1k||0);
+          s.ratePer1k=customerRate;
+          s.ratePerUnit=customerRate/1000;
+        });
+      });
       window.__asfuLiveServices=liveServices;
-      window.__asfuProviderFx=Number(data.fx||85);
+      window.__asfuProviderFx=1;
       providerOnline=true;
       renderLiveServices();
       window.__asfuProviderOnline=true;
@@ -1762,21 +1857,10 @@ loadServices();
     const btn=document.querySelector('#page-neworder .btn:not(.secondary)');
     if(btn){btn.disabled=true;btn.textContent='Placing Order...';}
     try{
-      let authHeader={};
-      try{
-        const sessionData=await window.asfuSupabase?.auth?.getSession();
-        const accessToken=sessionData?.data?.session?.access_token||'';
-        if(accessToken)authHeader={Authorization:'Bearer '+accessToken};
-      }catch(e){}
-      const result=await api('/order',{method:'POST',headers:authHeader,body:JSON.stringify({service:s.providerServiceId,url:t,quantity:q,comments:'',interval:''})});
-      const chargedAmount=Number(result.charge||amount);
-      current.balance=Math.max(0,Number(current.balance||0)-chargedAmount);
-      const u=db.users.find(x=>String(x.id)===String(current.id));
-      if(u)u.balance=current.balance;
-      const o={id:db.next.order++,providerOrderId:result.order,providerServiceId:s.providerServiceId,providerRate:Number(s.providerRate||0),sellRatePerUnit:Number(s.ratePerUnit||0),userId:current.id,service:s.name,target:t,qty:q,amount:chargedAmount,status:'Pending',providerStatus:'Pending',date:new Date().toLocaleString()};
-      db.orders.push(o);save();refresh();
-      if(typeof syncCustomerBalance==='function')await syncCustomerBalance();
-      toast('Order placed successfully • Provider #'+result.order);page('orders');
+      const result=await api('/order',{method:'POST',body:JSON.stringify({service:s.providerServiceId,url:t,quantity:q,comments:'',interval:''})});
+      current.balance-=amount;
+      const o={id:db.next.order++,providerOrderId:result.order,providerServiceId:s.providerServiceId,providerRate:Number(s.providerRate||0),sellRatePerUnit:Number(s.ratePerUnit||0),userId:current.id,service:s.name,target:t,qty:q,amount,status:'Pending',providerStatus:'Pending',date:new Date().toLocaleString()};
+      db.orders.push(o);save();refresh();toast('Order placed successfully • Provider #'+result.order);page('orders');
     }catch(e){toast(e.message||'Provider order failed');}
     finally{if(btn){btn.disabled=false;btn.textContent='Submit Order';}}
   };
@@ -2109,7 +2193,7 @@ loadServices();
     const arr=serviceArr(); const q=String(filter||'').toLowerCase().trim();
     const menu=svcPicker.querySelector('.smmzz-menu');
     const list=arr.map((s,i)=>({s,i})).filter(x=>{const hay=(String(x.s.name||'')+' '+String(x.s.providerServiceId||x.s.service||'')).toLowerCase();return !q||hay.includes(q)});
-    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
+    menu.innerHTML=list.map(x=>{const sid=x.s.providerServiceId||x.s.service||x.s.id||String(x.i+1);const rate=Number(x.s.ratePer1k||0);const price=Number.isFinite(rate)&&rate>0?`₹${rate.toFixed(2)} / 1K`:'Price —';return `<button type="button" class="smmzz-option" data-index="${x.i}"><span class="smmzz-num">${esc(sid)}</span><span>${esc(x.s.name||('Service '+sid))}</span><span class="smmzz-price">${price}</span></button>`}).join('')||'<div style="padding:14px;color:#777">No services found</div>';
     menu.querySelectorAll('.smmzz-option').forEach(b=>b.onclick=function(){svc.value=this.dataset.index;svcPicker.classList.remove('open');updateInfo();if(typeof window.updateOrderTotal==='function')window.updateOrderTotal();});
     const idx=Number(svc.value)||0, s=arr[idx];
     if(s){const sid=s.providerServiceId||s.service||String(idx+1);setCurrent(svcPicker,`<span class="smmzz-num">${esc(sid)}</span><span>${esc(s.name||'Select service')}</span>`);}
@@ -2224,11 +2308,185 @@ loadServices();
 })();
 </script>
 
-<style id="asfu-orders-mobile-safe-bottom-v1">
+<style id="asfu-full-premium-v1">
+/* ASFU Premium Product Layer — UI only, existing API/order/payment logic preserved */
+:root{--premium-blue:#3f8cff;--premium-violet:#7b52ff;--premium-cyan:#49c6ff;--premium-card:linear-gradient(145deg,#0d1d35,#081426);--premium-border:rgba(96,135,202,.28)}
+#app{background:radial-gradient(circle at 75% 0,rgba(52,111,255,.10),transparent 28%),#050b16;min-height:100vh}
+#app .main{padding-top:28px}
+#app .side{background:linear-gradient(180deg,#071221,#06101d);box-shadow:12px 0 35px rgba(0,0,0,.14)}
+#app .side button{transition:.18s ease;position:relative;overflow:hidden}
+#app .side button:hover{transform:translateX(3px);border-color:#31588e!important;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,.16)}
+#app .side button:active{transform:scale(.985)}
+.premiumHeaderTools{display:flex!important;align-items:center;gap:9px;margin-left:auto!important}
+.premiumIconBtn{width:42px;height:42px;border-radius:13px;border:1px solid #263f66;background:linear-gradient(145deg,#0d1d35,#081426);color:#dce8ff;display:grid;place-items:center;cursor:pointer;position:relative;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:.18s ease}
+.premiumIconBtn:hover{border-color:#4c75b1;transform:translateY(-1px);color:#fff}
+.premiumBell{font-size:20px;line-height:1}.premiumBellDot{position:absolute;right:7px;top:6px;min-width:8px;height:8px;border-radius:99px;background:#ff5574;box-shadow:0 0 10px rgba(255,85,116,.7);display:none}.premiumBellDot.show{display:block}
+.premiumMiniBalance{padding:8px 12px;border:1px solid #263f66;border-radius:13px;background:#0a172a;display:flex;flex-direction:column;min-width:92px;cursor:pointer}.premiumMiniBalance span{font-size:9px;color:#7188aa;text-transform:uppercase;letter-spacing:.7px}.premiumMiniBalance b{font-size:14px;margin-top:2px;color:#fff}
+.premiumUserChip{display:flex;align-items:center;gap:8px;padding:5px 9px 5px 5px;border:1px solid #263f66;border-radius:13px;background:#0a172a;cursor:pointer}.premiumUserAvatar{width:31px;height:31px;border-radius:10px;background:linear-gradient(135deg,#713cff,#287cff);display:grid;place-items:center;font-weight:900;font-size:11px;color:#fff}.premiumUserChip span{font-size:11px;color:#cbd9ef;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.premiumNotificationPanel{position:fixed;right:20px;top:86px;width:min(390px,calc(100vw - 28px));max-height:min(620px,calc(100dvh - 105px));overflow:hidden;z-index:10000;border:1px solid #2a4772;border-radius:20px;background:linear-gradient(160deg,#0e203a,#071426);box-shadow:0 30px 90px rgba(0,0,0,.58);display:none}.premiumNotificationPanel.open{display:block;animation:premiumPop .18s ease}.premiumNotificationHead{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 13px;border-bottom:1px solid rgba(100,135,194,.16)}.premiumNotificationHead h3{margin:0;font-size:15px}.premiumNotificationHead small{color:#7f96b8}.premiumNotificationHead button{border:0;background:transparent;color:#76a9ff;font-size:10px;font-weight:800;cursor:pointer}.premiumNotificationList{max-height:520px;overflow:auto;padding:7px}.premiumNotificationItem{display:flex;gap:10px;padding:12px;border-radius:13px;transition:.16s;background:transparent}.premiumNotificationItem:hover{background:rgba(73,120,202,.09)}.premiumNotificationItem.unread{background:linear-gradient(90deg,rgba(61,106,255,.12),transparent)}.premiumNotificationIcon{width:35px;height:35px;flex:0 0 35px;border-radius:11px;display:grid;place-items:center;background:#102643;border:1px solid #294b78;font-size:16px}.premiumNotificationBody{min-width:0;flex:1}.premiumNotificationBody b{display:block;font-size:11px;color:#eef4ff}.premiumNotificationBody p{margin:3px 0 0;font-size:10px;line-height:1.45;color:#8fa6c8}.premiumNotificationTime{font-size:9px;color:#627b9f;white-space:nowrap;margin-left:5px}.premiumNotificationEmpty{padding:35px 18px;text-align:center;color:#7890b3;font-size:11px}.premiumNotificationEmpty strong{display:block;color:#dbe7fa;font-size:13px;margin-bottom:5px}.premiumNotificationFooter{padding:9px 12px;border-top:1px solid rgba(100,135,194,.14);text-align:center;color:#7088ab;font-size:9px}
+@keyframes premiumPop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+.premiumActivity{margin-top:16px;padding:18px;border-radius:19px;border:1px solid var(--premium-border);background:var(--premium-card);box-shadow:0 14px 34px rgba(0,0,0,.18)}.premiumSectionHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.premiumSectionHead h2{margin:0;font-size:17px}.premiumSectionHead small{color:#6f87aa;font-size:10px}.premiumActivityGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.premiumActivityItem{display:flex;align-items:center;gap:10px;padding:11px;border-radius:13px;background:#09172a;border:1px solid #1a3152;min-width:0}.premiumActivityIcon{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:#102744;border:1px solid #28476e;flex:none}.premiumActivityText{min-width:0}.premiumActivityText b{display:block;font-size:10px;color:#dce8fa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.premiumActivityText small{display:block;margin-top:3px;color:#7189ab;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.premiumActivityAmount{margin-left:auto;color:#72b5ff;font-weight:850;font-size:10px;white-space:nowrap}
+.premiumServiceTools{display:flex;gap:8px;align-items:center;margin:10px 0 12px;flex-wrap:wrap}.premiumServiceSearch{flex:1;min-width:180px;height:42px!important;margin:0!important;border-radius:12px!important;background:#071225!important;border:1px solid #263f66!important}.premiumFilterChip{height:38px;padding:0 11px;border-radius:11px;border:1px solid #263f66;background:#0b192e;color:#9db2d2;font-size:10px;font-weight:800;cursor:pointer}.premiumFilterChip.active{background:linear-gradient(100deg,#33256f,#173c79);border-color:#4d72b2;color:#fff}.premiumServiceMeta{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 0}.premiumBadge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:850;border:1px solid #29476f;background:#0b1b30;color:#a9c0e3}.premiumBadge.blue{color:#72b7ff}.premiumBadge.green{color:#69e3aa}.premiumBadge.violet{color:#b89cff}.premiumBadge.gold{color:#f2cf72}
+.premiumOrderSummary{margin-top:14px;padding:15px;border-radius:17px;background:radial-gradient(circle at 100% 0,rgba(71,126,255,.18),transparent 38%),linear-gradient(145deg,#0e2039,#091426);border:1px solid #29466f;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.premiumOrderSummary div{min-width:0}.premiumOrderSummary span{display:block;color:#6f87aa;font-size:9px;text-transform:uppercase;letter-spacing:.5px}.premiumOrderSummary b{display:block;color:#eef4ff;font-size:12px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.premiumOrdersEmpty{text-align:center!important;padding:34px 18px!important}.ordersEmptyIcon{font-size:30px;margin-bottom:7px}.premiumOrdersEmpty b{display:block;font-size:14px}.premiumOrdersEmpty small{display:block;color:#7188aa;font-size:10px;margin-top:5px;white-space:normal!important}
+.premiumWalletHero{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-bottom:15px}.premiumWalletBalance{padding:21px;border-radius:20px;background:radial-gradient(circle at 85% 15%,rgba(76,132,255,.24),transparent 35%),linear-gradient(145deg,#10264a,#081528);border:1px solid #2b4b7a;box-shadow:0 17px 40px rgba(0,0,0,.2)}.premiumWalletBalance small{color:#91a8ca;font-size:10px;text-transform:uppercase;letter-spacing:1px}.premiumWalletBalance strong{display:block;font-size:32px;letter-spacing:-1px;margin:7px 0 13px}.premiumWalletBalance button{min-height:40px;border-radius:11px;border:0;padding:0 14px;background:linear-gradient(100deg,#713cff,#287cff);color:#fff;font-weight:850;font-size:11px;cursor:pointer}.premiumWalletStat{padding:18px;border-radius:20px;border:1px solid #203b62;background:var(--premium-card)}.premiumWalletStat span{color:#7188aa;font-size:10px}.premiumWalletStat b{display:block;font-size:21px;margin-top:7px}.premiumWalletStat small{display:block;color:#6e87aa;margin-top:5px;font-size:9px}
+.premiumSupportHero{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:18px;border-radius:19px;border:1px solid #28466f;background:linear-gradient(145deg,#102443,#091528);margin-bottom:15px}.premiumSupportHero h2{margin:0;font-size:18px}.premiumSupportHero p{margin:5px 0 0;color:#8199bd;font-size:10px}.premiumSupportHero button{flex:none}
+.premiumProfileSecurity{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}.premiumSecurityCard{padding:13px;border-radius:14px;border:1px solid #1d3659;background:#09172a}.premiumSecurityCard span{font-size:17px}.premiumSecurityCard b{display:block;font-size:10px;margin-top:7px}.premiumSecurityCard small{display:block;color:#7088aa;font-size:9px;margin-top:3px}
+.premiumBottomSpace{height:20px}
+@media(max-width:900px){.premiumMiniBalance{display:none}.premiumUserChip span{display:none}.premiumNotificationPanel{right:14px;top:84px}.premiumActivityGrid{grid-template-columns:1fr}.premiumOrderSummary{grid-template-columns:1fr 1fr}.premiumWalletHero{grid-template-columns:1fr}}
+@media(max-width:600px){#app .main{padding:13px 13px 95px}.premiumHeaderTools{gap:6px}.premiumIconBtn{width:39px;height:39px;border-radius:12px}.premiumUserChip{padding:4px}.premiumUserAvatar{width:30px;height:30px}.premiumNotificationPanel{right:10px;top:82px;width:calc(100vw - 20px);border-radius:17px}.premiumNotificationList{max-height:calc(100dvh - 190px)}.premiumActivity{padding:14px;border-radius:16px}.premiumServiceTools{gap:6px}.premiumServiceSearch{min-width:100%;height:44px!important}.premiumFilterChip{flex:1}.premiumOrderSummary{gap:8px;padding:12px;border-radius:14px}.premiumOrderSummary b{font-size:11px}.premiumWalletBalance{padding:18px;border-radius:17px}.premiumWalletBalance strong{font-size:28px}.premiumWalletStat{border-radius:17px}.premiumSupportHero{align-items:flex-start;flex-direction:column;border-radius:17px}.premiumSupportHero button{width:100%}.premiumProfileSecurity{grid-template-columns:1fr}.premiumActivityItem{padding:10px}}
+</style>
+
+<script id="asfu-full-premium-js">
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  let premiumLastSnapshot='';
+  let premiumUnread=0;
+  const readKey='asfu_premium_notifications_read';
+  const activityKey='asfu_premium_activity_snapshot';
+  function safe(v){return typeof esc==='function'?esc(v):String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function currentUser(){return window.current||current;}
+  function makeHeaderTools(){
+    const app=$('app'), bar=app?.querySelector('.topbar'); if(!bar||bar.querySelector('.premiumHeaderTools'))return;
+    const tools=document.createElement('div'); tools.className='premiumHeaderTools';
+    tools.innerHTML=`<button class="premiumIconBtn" id="premiumBellBtn" aria-label="Notifications"><span class="premiumBell">♧</span><i class="premiumBellDot" id="premiumBellDot"></i></button><div class="premiumMiniBalance" id="premiumMiniBalance"><span>Wallet balance</span><b id="premiumMiniBalanceValue">₹0.00</b></div><div class="premiumUserChip" id="premiumUserChip"><div class="premiumUserAvatar" id="premiumUserAvatar">U</div><span id="premiumUserName">Account</span></div>`;
+    bar.appendChild(tools);
+    $('premiumBellBtn').onclick=toggleNotifications;
+    $('premiumMiniBalance').onclick=()=>{if(typeof page==='function')page('funds')};
+    $('premiumUserChip').onclick=()=>{if(typeof page==='function')page('profile')};
+  }
+  function ensurePanel(){
+    if($('premiumNotificationPanel'))return;
+    const p=document.createElement('div');p.id='premiumNotificationPanel';p.className='premiumNotificationPanel';p.innerHTML=`<div class="premiumNotificationHead"><div><h3>Notifications</h3><small id="premiumNotificationCount">All caught up</small></div><button id="premiumMarkRead">MARK ALL READ</button></div><div class="premiumNotificationList" id="premiumNotificationList"></div><div class="premiumNotificationFooter">ASFU updates • Order, wallet & support activity</div>`;document.body.appendChild(p);
+    $('premiumMarkRead').onclick=()=>{localStorage.setItem(readKey,Date.now().toString());premiumUnread=0;renderNotifications();};
+    document.addEventListener('click',e=>{if(p.classList.contains('open')&&!p.contains(e.target)&&!$('premiumBellBtn')?.contains(e.target))p.classList.remove('open')});
+  }
+  function toggleNotifications(){ensurePanel();renderNotifications();$('premiumNotificationPanel').classList.toggle('open')}
+  function readStamp(){return Number(localStorage.getItem(readKey)||0)}
+  function getNotifications(){
+    const u=currentUser(); if(!u)return [];
+    const out=[]; const now=Date.now();
+    const orders=(db?.orders||[]).filter(o=>String(o.userId)===String(u.id)).slice().reverse();
+    orders.slice(0,12).forEach(o=>{out.push({id:'order-'+o.id,ts:Date.parse(o.date)||now,icon:o.status==='Completed'?'✓':o.status==='Cancelled'?'×':'↗',title:`Order #${o.id} • ${o.status||'Pending'}`,text:`${o.service||'Service'} · Qty ${Number(o.qty||0).toLocaleString()} · ₹${Number(o.amount||0).toFixed(2)}`,type:'order'});});
+    const payments=(db?.payments||[]).filter(p=>String(p.userId)===String(u.id)).slice().reverse();
+    payments.slice(0,8).forEach(p=>out.push({id:'payment-'+p.id,ts:Date.parse(p.date||p.createdAt)||now,icon:p.status==='Approved'?'₹':p.status==='Rejected'?'!':'$',title:`Wallet payment • ${p.status||'Pending'}`,text:`₹${Number(p.amount||0).toFixed(2)} · UTR ${p.utr||'pending verification'}`,type:'wallet'}));
+    const tickets=(db?.tickets||[]).filter(t=>String(t.userId)===String(u.id)).slice().reverse();
+    tickets.slice(0,8).forEach(t=>out.push({id:'ticket-'+t.id,ts:Date.parse(t.date)||now,icon:'✉',title:`Support #${t.id} • ${t.status||'Open'}`,text:t.subject||t.issueType||'Support ticket update',type:'support'}));
+    return out.sort((a,b)=>b.ts-a.ts).slice(0,18);
+  }
+  function renderNotifications(){
+    const list=$('premiumNotificationList'),count=$('premiumNotificationCount');if(!list)return;const items=getNotifications(),stamp=readStamp();
+    premiumUnread=items.filter(x=>x.ts>stamp).length; if(count)count.textContent=premiumUnread?`${premiumUnread} new update${premiumUnread>1?'s':''}`:'All caught up';
+    $('premiumBellDot')?.classList.toggle('show',premiumUnread>0);
+    list.innerHTML=items.length?items.map(x=>`<div class="premiumNotificationItem ${x.ts>stamp?'unread':''}"><div class="premiumNotificationIcon">${safe(x.icon)}</div><div class="premiumNotificationBody"><b>${safe(x.title)}</b><p>${safe(x.text)}</p></div><span class="premiumNotificationTime">${relativeTime(x.ts)}</span></div>`).join(''):`<div class="premiumNotificationEmpty"><div style="font-size:30px;margin-bottom:8px">✦</div><strong>No notifications</strong>Your order, wallet and support updates will appear here.</div>`;
+  }
+  function relativeTime(ts){const d=Math.max(0,Date.now()-Number(ts||Date.now()));const m=Math.floor(d/60000);if(m<1)return'now';if(m<60)return m+'m';const h=Math.floor(m/60);if(h<24)return h+'h';const day=Math.floor(h/24);return day<7?day+'d':new Date(ts).toLocaleDateString();}
+  function updateHeader(){
+    const u=currentUser();if(!u)return;const bal=Number(u.balance||0);if($('premiumMiniBalanceValue'))$('premiumMiniBalanceValue').textContent='₹'+bal.toFixed(2);if($('premiumUserName'))$('premiumUserName').textContent=u.name||u.username||'Account';if($('premiumUserAvatar'))$('premiumUserAvatar').textContent=String(u.name||u.username||'U').trim().charAt(0).toUpperCase();
+    renderNotifications();
+  }
+  function injectActivity(){
+    const dash=$('page-dashboard');if(!dash||dash.querySelector('.premiumActivity'))return;
+    const box=document.createElement('section');box.className='premiumActivity';box.innerHTML=`<div class="premiumSectionHead"><h2>Recent Activity</h2><small>Latest account updates</small></div><div class="premiumActivityGrid" id="premiumActivityGrid"></div>`;
+    const footer=dash.querySelector('.asfuDashboardFooterPro'); if(footer)footer.parentNode.insertBefore(box,footer);else dash.appendChild(box);renderActivity();
+  }
+  function renderActivity(){const grid=$('premiumActivityGrid');const u=currentUser();if(!grid||!u)return;const a=[];(db?.orders||[]).filter(o=>String(o.userId)===String(u.id)).slice().reverse().slice(0,3).forEach(o=>a.push({i:o.status==='Completed'?'✓':'↗',t:`Order #${o.id}`,s:`${o.service||'Service'} • ${o.status||'Pending'}`,v:'₹'+Number(o.amount||0).toFixed(2)}));(db?.tickets||[]).filter(t=>String(t.userId)===String(u.id)).slice().reverse().slice(0,2).forEach(t=>a.push({i:'✉',t:`Support #${t.id}`,s:t.subject||t.issueType||'Support request',v:t.status||'Open'}));grid.innerHTML=a.length?a.slice(0,5).map(x=>`<div class="premiumActivityItem"><div class="premiumActivityIcon">${x.i}</div><div class="premiumActivityText"><b>${safe(x.t)}</b><small>${safe(x.s)}</small></div><span class="premiumActivityAmount">${safe(x.v)}</span></div>`).join(''):`<div class="premiumActivityItem" style="grid-column:1/-1"><div class="premiumActivityIcon">✦</div><div class="premiumActivityText"><b>Your activity will appear here</b><small>Place an order or open support to get started.</small></div></div>`;}
+  function injectWallet(){const p=$('page-funds');if(!p||p.querySelector('.premiumWalletHero'))return;const hero=document.createElement('div');hero.className='premiumWalletHero';hero.innerHTML=`<div class="premiumWalletBalance"><small>Available wallet balance</small><strong id="premiumWalletHeroBalance">₹0.00</strong><button onclick="page('neworder')">Start a new order →</button></div><div class="premiumWalletStat"><span>Wallet status</span><b>Active</b><small>Payments are verified before balance is added.</small></div>`;const head=p.querySelector('.pageHead');if(head)head.insertAdjacentElement('afterend',hero);}
+  function updateWallet(){const u=currentUser();if($('premiumWalletHeroBalance')&&u)$('premiumWalletHeroBalance').textContent='₹'+Number(u.balance||0).toFixed(2)}
+  function injectSupport(){const p=$('page-tickets');if(!p||p.querySelector('.premiumSupportHero'))return;const h=document.createElement('div');h.className='premiumSupportHero';h.innerHTML=`<div><h2>Support Center</h2><p>Need help with an order, payment or service? Our support flow keeps everything in one place.</p></div><button class="btn" onclick="document.querySelector('#page-tickets .ticketForm')?.scrollIntoView({behavior:'smooth',block:'center'})">Open a ticket</button>`;const head=p.querySelector('.pageHead');if(head)head.insertAdjacentElement('afterend',h);}
+  function injectProfile(){const p=$('page-profile');if(!p||p.querySelector('.premiumProfileSecurity'))return;const s=document.createElement('div');s.className='premiumProfileSecurity';s.innerHTML=`<div class="premiumSecurityCard"><span>🔐</span><b>Account Security</b><small>Keep your password private.</small></div><div class="premiumSecurityCard"><span>✓</span><b>Verified Session</b><small>Your current login is active.</small></div><div class="premiumSecurityCard"><span>⚡</span><b>Fast Support</b><small>Tickets are available anytime.</small></div>`;p.appendChild(s);}
+  function addServiceExplorer(){const p=$('page-neworder');if(!p||p.querySelector('.premiumServiceTools'))return;const search=p.querySelector('.smmzz-search');if(!search)return;const tools=document.createElement('div');tools.className='premiumServiceTools';tools.innerHTML=`<input class="input premiumServiceSearch" id="premiumServiceSearch" placeholder="Search services by name or category…" autocomplete="off"><button class="premiumFilterChip active" data-filter="all">All</button><button class="premiumFilterChip" data-filter="fast">⚡ Fast</button><button class="premiumFilterChip" data-filter="premium">✦ Premium</button>`;search.parentNode.insertBefore(tools,search.nextSibling);const input=$('premiumServiceSearch');input.addEventListener('input',()=>filterServices(input.value,''));tools.querySelectorAll('.premiumFilterChip').forEach(b=>b.onclick=()=>{tools.querySelectorAll('.premiumFilterChip').forEach(x=>x.classList.remove('active'));b.classList.add('active');filterServices(input.value,b.dataset.filter)});}
+  function filterServices(q,filter){const sel=$('service');if(!sel)return;const term=String(q||'').toLowerCase();Array.from(sel.options).forEach(o=>{const t=o.textContent.toLowerCase();let ok=!term||t.includes(term);if(filter==='fast')ok=ok&&/fast|instant|quick/i.test(t);if(filter==='premium')ok=ok&&/premium|quality|best|pro/i.test(t);o.hidden=!ok;});const active=sel.options[sel.selectedIndex];if(active?.hidden){const next=Array.from(sel.options).find(o=>!o.hidden);if(next){sel.value=next.value;sel.dispatchEvent(new Event('change',{bubbles:true}));}}}
+  function watchSnapshot(){const u=currentUser();if(!u)return;const snap=JSON.stringify({balance:u.balance,orders:(db?.orders||[]).filter(o=>String(o.userId)===String(u.id)).map(o=>[o.id,o.status]),tickets:(db?.tickets||[]).filter(t=>String(t.userId)===String(u.id)).map(t=>[t.id,t.status]),payments:(db?.payments||[]).filter(p=>String(p.userId)===String(u.id)).map(p=>[p.id,p.status])});if(premiumLastSnapshot&&snap!==premiumLastSnapshot){renderNotifications();renderActivity();updateWallet();updateHeader()}premiumLastSnapshot=snap;}
+  function boot(){makeHeaderTools();ensurePanel();injectActivity();injectWallet();injectSupport();injectProfile();addServiceExplorer();updateHeader();updateWallet();watchSnapshot();}
+  document.addEventListener('DOMContentLoaded',()=>{setTimeout(boot,350);setTimeout(boot,1300);});
+  setInterval(()=>{boot();watchSnapshot();},2500);
+  const oldPage=window.page;if(typeof oldPage==='function'){window.page=function(id){const r=oldPage.apply(this,arguments);setTimeout(()=>{boot();if(id==='dashboard')renderActivity();if(id==='funds')updateWallet();},100);return r;};}
+  const oldRefresh=window.refresh;if(typeof oldRefresh==='function'){window.refresh=function(){const r=oldRefresh.apply(this,arguments);setTimeout(()=>{boot();watchSnapshot();},80);return r;};}
+})();
+</script>
+
+<style id="asfu-premium-final-v2">
+/* ASFU Premium Final Layer — visual refinement only; existing API/data flows untouched */
+.premiumIconBtn#premiumBellBtn{width:44px;height:44px;border-radius:14px;padding:0;background:linear-gradient(145deg,#0d1b31,#081426);border:1px solid #29456e;box-shadow:0 8px 24px rgba(0,0,0,.20);overflow:visible}
+.premiumIconBtn#premiumBellBtn:hover{border-color:#4a78b9;box-shadow:0 10px 28px rgba(40,124,255,.14);transform:translateY(-1px)}
+.premiumBellSvg{width:20px;height:20px;display:block;stroke:#dbe8ff;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.premiumBellBadge{position:absolute;right:-3px;top:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;display:none;align-items:center;justify-content:center;background:#ff4f70;color:#fff;border:2px solid #07111f;box-shadow:0 4px 12px rgba(255,79,112,.38);font-size:8px;font-weight:950;line-height:1;letter-spacing:-.1px}
+.premiumBellBadge.show{display:flex}
+.premiumBellDot{display:none!important}
+.premiumNotificationPanel{width:min(410px,calc(100vw - 24px));border-radius:22px;background:linear-gradient(155deg,#0d1e36 0%,#081426 62%,#06101e 100%);border:1px solid rgba(92,133,198,.34);box-shadow:0 32px 100px rgba(0,0,0,.66),0 0 0 1px rgba(40,124,255,.035);backdrop-filter:blur(20px)}
+.premiumNotificationHead{padding:17px 17px 14px;background:linear-gradient(180deg,rgba(22,48,82,.32),transparent);}
+.premiumNotificationHead h3{font-size:15px;letter-spacing:-.1px}
+.premiumNotificationHead small{display:inline-flex;align-items:center;min-height:19px;margin-top:4px;padding:0 7px;border-radius:999px;background:#0b1b31;border:1px solid #203a5e;color:#7894bb;font-size:9px}
+.premiumNotificationHead button{padding:6px 0;color:#75aaff;font-size:9px;letter-spacing:.35px}
+.premiumNotificationList{padding:8px;max-height:510px}
+.premiumNotificationItem{position:relative;gap:11px;padding:12px;border:1px solid transparent;border-radius:14px;margin-bottom:3px}
+.premiumNotificationItem.unread{background:linear-gradient(90deg,rgba(63,140,255,.105),rgba(63,140,255,.018));border-color:rgba(63,140,255,.11)}
+.premiumNotificationItem.unread:after{content:"";position:absolute;left:4px;top:16px;width:3px;height:22px;border-radius:4px;background:#4b91ff;box-shadow:0 0 10px rgba(75,145,255,.45)}
+.premiumNotificationIcon{width:36px;height:36px;flex-basis:36px;border-radius:12px;background:linear-gradient(145deg,#122947,#0b1d33);border:1px solid #294a75;color:#aecdff;font-size:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+.premiumNotificationBody b{font-size:11px;font-weight:850}
+.premiumNotificationBody p{font-size:10px;color:#91a7c8;line-height:1.5}
+.premiumNotificationTime{font-size:8px;color:#6881a5}
+.premiumNotificationFooter{padding:10px 13px;color:#6680a4;background:rgba(4,11,21,.18)}
+.premiumNotificationEmpty{padding:42px 18px}
+.premiumNotificationEmpty strong{font-size:13px}
+.premiumGreeting{font-size:10px!important;color:#6f9fe0!important;margin:0 0 4px!important;font-weight:800!important;letter-spacing:.08em!important;text-transform:uppercase}
 @media(max-width:600px){
-  #page-orders{padding-bottom:120px!important;box-sizing:border-box}
-  #page-orders .ordersTableWrap{margin-bottom:18px!important}
-  #page-orders .ordersTable{padding-bottom:4px}
+  .premiumIconBtn#premiumBellBtn{width:40px;height:40px;border-radius:12px}
+  .premiumBellSvg{width:18px;height:18px}
+  .premiumBellBadge{right:-4px;top:-5px;min-width:17px;height:17px;font-size:7px}
+  .premiumNotificationPanel{right:8px;top:80px;width:calc(100vw - 16px);border-radius:18px}
+  .premiumNotificationHead{padding:15px 14px 12px}
 }
 </style>
+<script id="asfu-premium-final-v2-js">
+(function(){
+  'use strict';
+  function q(id){return document.getElementById(id)}
+  function user(){try{return window.current||current}catch(e){return null}}
+  function greeting(){
+    var h=new Date().getHours(), label=h<5?'Good Night':h<12?'Good Morning':h<17?'Good Afternoon':h<21?'Good Evening':'Good Night';
+    var u=user(), name=u&&String(u.name||'').trim();
+    if(!name&&u&&u.email)name=String(u.email).split('@')[0];
+    var nameEl=q('asfuDashName');
+    if(nameEl){nameEl.innerHTML='<span class="premiumGreeting">'+label+'</span><span> '+(name?escapeHtml(name):'there')+'</span>'}
+    var welcome=q('welcomeUser');
+    if(welcome&&welcome.textContent&&/Welcome Back/i.test(welcome.textContent)) welcome.textContent=label+(name?', '+name:'');
+  }
+  function escapeHtml(v){return String(v||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+  function bell(){
+    var b=q('premiumBellBtn');if(!b)return;
+    if(!b.querySelector('.premiumBellSvg')){
+      b.innerHTML='<svg class="premiumBellSvg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><span class="premiumBellBadge" id="premiumBellBadge">0</span>';
+    }
+  }
+  function badge(){
+    bell();
+    var b=q('premiumBellBadge'), c=q('premiumNotificationCount');if(!b)return;
+    var text=c?String(c.textContent||''):'';
+    var m=text.match(/(\d+)/), n=m?Number(m[1]):0;
+    b.textContent=n>99?'99+':String(n);b.classList.toggle('show',n>0);
+  }
+  function enhanceNotificationItems(){
+    var list=q('premiumNotificationList');if(!list)return;
+    list.querySelectorAll('.premiumNotificationItem').forEach(function(item){
+      if(item.dataset.asfuBound)return;item.dataset.asfuBound='1';
+      item.addEventListener('click',function(){
+        var t=(item.textContent||'').toLowerCase();
+        if(t.indexOf('order')>=0&&typeof page==='function')page('orders');
+        else if((t.indexOf('wallet')>=0||t.indexOf('payment')>=0)&&typeof page==='function')page('funds');
+        else if(t.indexOf('support')>=0&&typeof page==='function')page('tickets');
+        var panel=q('premiumNotificationPanel');if(panel)panel.classList.remove('open');
+      });
+    });
+  }
+  function run(){
+    bell();greeting();badge();enhanceNotificationItems();
+  }
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(run,450);setTimeout(run,1400);});
+  setInterval(run,1200);
+})();
+</script>
+
 </body></html>
