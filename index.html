@@ -1540,7 +1540,7 @@ function page(id){
   if(id==='tickets')renderTickets();
   if(id==='profile'){profileName.value=current.name||'';profileEmail.value=current.email||'';var pa=document.getElementById('asfuProfileAvatar');if(pa){var nameText=String(current.name||'User').trim().replace(/\s+/g,' ');var pp=nameText?nameText.split(' '):['User'];var initials=(pp[0]?.charAt(0)||'U')+(pp.length>1&&pp[1]?pp[1].charAt(0):'');pa.textContent=initials.toUpperCase()||'U'}}
   if(id==='admin'){renderAdmin();setTimeout(loadAdminPayments,0);}
-  document.getElementById('side').classList.remove('open');
+  closeSide();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function toggleSide(){
