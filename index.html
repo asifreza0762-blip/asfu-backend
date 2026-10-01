@@ -1212,6 +1212,30 @@ button:active,.btn:active,[role="button"]:active{filter:brightness(1.12);}
 .asfuFeatureLock{position:relative}.asfuFeatureLock:after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(4,10,20,.48);pointer-events:none;opacity:0;transition:.18s}.asfuFeatureLock.asfuLocked:after{opacity:1}
 @media(max-width:600px){.asfuUserNoticeStack{margin-bottom:12px}.asfuUserNotice{padding:12px;border-radius:14px}.asfuUserNotice .asfuNoticeIcon{width:34px;height:34px;flex-basis:34px;font-size:15px}.asfuUserNoticeBody b{font-size:11px}.asfuUserNoticeBody p{font-size:9.5px}.asfuRestrictionCard{padding:25px 17px 19px;border-radius:20px}.asfuRestrictionCard h2{font-size:20px}.asfuRestrictionActions{flex-direction:column}.asfuMaintenanceBar{font-size:10px}}
 </style>
+
+<style id="asfu-control-panel-final-fix">
+/* Control Panel final correction — scoped only to the app sidebar/drawer. */
+#app .side .asfuSideTop{width:100%!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin-bottom:16px!important}
+#app .side .asfuSideTop > div{min-width:0!important;flex:1 1 auto!important}
+#app .side .asfuSideTop h3{margin:2px 0 0!important;font-size:22px!important;line-height:1.12!important}
+#app .side .asfuSideClose{display:grid!important;place-items:center!important;width:46px!important;min-width:46px!important;max-width:46px!important;height:46px!important;min-height:46px!important;max-height:46px!important;flex:0 0 46px!important;padding:0!important;margin:0!important;text-align:center!important;line-height:1!important;border:1px solid #29466f!important;border-radius:13px!important;background:#0a1930!important;color:#dce8ff!important;font-size:25px!important;font-weight:700!important;box-shadow:none!important;transform:none!important;overflow:hidden!important}
+#app .side .asfuSideClose:hover{transform:none!important;background:#102341!important;border-color:#3c6298!important;color:#fff!important;box-shadow:0 8px 20px rgba(0,0,0,.18)!important}
+#app .side .asfuSideUser{width:100%!important;min-width:0!important;min-height:66px!important;display:flex!important;align-items:center!important;gap:12px!important;padding:11px 13px!important;margin:0 0 14px!important;border-radius:16px!important}
+#app .side .asfuSideAvatar{width:44px!important;min-width:44px!important;max-width:44px!important;height:44px!important;min-height:44px!important;max-height:44px!important;flex:0 0 44px!important;display:grid!important;place-items:center!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:clip!important;padding:0!important;line-height:1!important;font-size:13px!important;letter-spacing:-.2px!important;border-radius:13px!important}
+#app .side .asfuSideUserText{min-width:0!important;flex:1 1 auto!important;width:0!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:3px!important}
+#app .side .asfuSideUserText b{display:block!important;max-width:100%!important;font-size:13px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#app .side .asfuSideUserText span{display:block!important;max-width:100%!important;font-size:10px!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#app .side .asfuOnlineDot{margin-left:auto!important;flex:0 0 8px!important;width:8px!important;height:8px!important}
+#app .side > button.btn.secondary{width:100%!important;min-height:50px!important;margin:4px 0!important;padding:0 15px!important;display:flex!important;align-items:center!important;gap:9px!important;text-align:left!important;white-space:nowrap!important}
+#app .side #adminNav{width:100%!important;margin-top:14px!important;padding-top:13px!important}
+@media(max-width:600px){
+#app .side{width:min(340px,88vw)!important;padding:17px 13px 30px!important}
+#app .side .asfuSideTop h3{font-size:20px!important}
+#app .side .asfuSideClose{width:44px!important;min-width:44px!important;max-width:44px!important;height:44px!important;min-height:44px!important;max-height:44px!important;flex-basis:44px!important}
+#app .side .asfuSideUser{min-height:64px!important;margin-bottom:12px!important}
+#app .side > button.btn.secondary{min-height:49px!important;font-size:13px!important}
+}
+</style>
 </head>
 <body>
 <div id="landing">
@@ -1860,7 +1884,7 @@ async function changePasswordFromProfile(){
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeChangePassword()});
 
 function refresh(){
-  (function(){var n=document.getElementById('asfuSideName'),e=document.getElementById('asfuSideEmail'),a=document.getElementById('asfuSideAvatar');if(n)n.textContent=String(current?.name||current?.email?.split('@')[0]||'Account');if(e)e.textContent=String(current?.email||'Customer account');if(a){var z=String(current?.name||current?.email?.split('@')[0]||'A').trim().split(/\s+/).filter(Boolean);a.textContent=((z[0]||'A')[0]+(z[1]||'')[0]).toUpperCase()}})();
+  (function(){var n=document.getElementById('asfuSideName'),e=document.getElementById('asfuSideEmail'),a=document.getElementById('asfuSideAvatar');var rawName=String(current?.name||'').trim();var fallback=String(current?.email||'').split('@')[0].trim();var display=rawName||fallback||'Account';if(n)n.textContent=display;if(e)e.textContent=String(current?.email||'Customer account');if(a){var z=display.replace(/[^A-Za-z0-9 ]/g,' ').trim().split(/\s+/).filter(Boolean);var initials=z.length>1?((z[0][0]||'')+(z[1][0]||'')):((z[0]||'A').slice(0,2));a.textContent=initials.toUpperCase()}})();
 if(!current)return;if(current.role==='admin'){bal.textContent='₹0.00';orderCount.textContent=db.orders.length;pendingCount.textContent=db.orders.filter(o=>o.status==='Pending').length;const ticketCountEl=document.getElementById('adminTickets');if(ticketCountEl)ticketCountEl.textContent=db.tickets.length;var ac=db.orders.filter(o=>o.status==='Completed').length, ax=db.orders.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;return}let u=db.users.find(x=>x.id===current.id);if(!u){logout();return}current=u;bal.textContent='₹'+u.balance.toFixed(2);let os=db.orders.filter(o=>o.userId===u.id);orderCount.textContent=os.length;pendingCount.textContent=os.filter(o=>o.status==='Pending').length;const ticketCountEl=document.getElementById('adminTickets');if(ticketCountEl)ticketCountEl.textContent=db.tickets.filter(t=>t.userId===u.id).length;var ac=os.filter(o=>o.status==='Completed').length, ax=os.filter(o=>o.status==='Cancelled').length;var ce=document.getElementById('asfuCompletedCount'),ca=document.getElementById('asfuCancelledCount');if(ce)ce.textContent=ac;if(ca)ca.textContent=ax;var nm=document.getElementById('asfuDashName');if(nm){var displayName=String(current.name||'').trim();if(!displayName&&current.email)displayName=String(current.email).split('@')[0];nm.textContent=displayName?'Welcome Back, '+displayName:'Welcome Back'}var av=document.getElementById('asfuDashAvatar');if(av){var avatarName=String(current.name||'').trim();if(!avatarName&&current.email)avatarName=String(current.email).split('@')[0];var parts=avatarName.split(/\s+/).filter(Boolean);av.textContent=((parts[0]||'U')[0]+(parts[1]||'')[0]).toUpperCase()}}
 function renderAdmin(){if(current.role!=='admin')return;adminUsers.textContent=db.users.length;adminOrders.textContent=db.orders.length;adminTickets.textContent=db.tickets.length;
   const adminSalesEl=document.getElementById('adminSales'),adminProfitEl=document.getElementById('adminProfit'),adminCompletedEl=document.getElementById('adminCompleted'),adminWalletEl=document.getElementById('adminWalletAdded');
