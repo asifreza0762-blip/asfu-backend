@@ -1650,6 +1650,38 @@ body.asfu-legal-open{overflow:hidden!important;touch-action:none!important;}
   }
 }
 </style>
+
+<style id="asfu-desktop-layout-width-fix">
+/* Desktop layout width fix: use the full space available beside the sidebar.
+   Mobile/tablet rules and existing functionality remain unchanged. */
+@media (min-width:901px){
+  #app .layout{
+    grid-template-columns:310px minmax(0,1fr)!important;
+    width:100%!important;
+    max-width:none!important;
+  }
+  #app .main{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    padding:28px clamp(24px,3vw,42px) 70px!important;
+  }
+  #app .page{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+  #page-dashboard.asfu-dashboard-pro,
+  #page-dashboard.asfu-dashboard-pro > *{
+    max-width:none!important;
+  }
+}
+</style>
 </head>
 <body>
 <div id="landing">
